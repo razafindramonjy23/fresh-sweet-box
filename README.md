@@ -35,9 +35,20 @@ généré, rien ne provient d'une URL distante.
 | `bol-salade-fruits.jpg` | Visuel principal du hero | Réduit à 1100 px. |
 | `cake-cafe.jpg` | Second cliché du hero (polaroid flottant) | **Recadré sur l'assiette** : la nappe rouge et le tissu zébré du cliché d'origine tiraient l'œil hors de la palette. |
 | `bol-salade-fruits-detail.jpg` | Section « Notre esprit » | Réduit à 900 px. |
+| `salade-fraiche.jpg` | Pastille de la carte « Salades fraîches » | **Recadré carré** et recentré sur le bol, pour tenir dans un masque rond de 100 px. |
+| `milkshake.jpg` | Pastille de la carte « Jus & milkshakes » | **Recadré carré** sur le gobelet, ce qui écarte l'arrière-plan de salle. Logo lisible et correct. |
 
 Le polaroid du hero est masqué en dessous de 600 px : à cette largeur il
 entrerait en concurrence avec la pastille « faite avec amour ».
+
+**Ajouter une photo aux deux autres cartes** : poser le fichier dans
+`public/images/`, puis remplacer `icon: "🍓"` par `image: "/images/<fichier>"`
+dans `MENU_CARDS` (`app/page.tsx`). Le reste suit tout seul — la pastille
+accepte les deux. Prévoir un recadrage carré, le masque est rond.
+
+La pastille `.card-media` est **dans le flux**, pas en position absolue :
+c'est ce qui garantit qu'elle ne recouvre jamais le titre, quelle que soit
+la largeur de la carte.
 
 ## Animation
 
@@ -76,8 +87,8 @@ Une seule mesure gouverne toute la page, définie en haut de `globals.css` :
 --gutter: clamp(20px, 5.4vw, 78px);     /* marges latérales, 20px sur mobile */
 ```
 
-`.shell` applique les deux. Barre de navigation, hero, sections, bloc vert et
-pied de page sont tous des `.shell` ou des enfants directs de `.shell` : ils
+`.shell` applique les deux. Barre de navigation, hero, sections et pied de
+page sont tous des `.shell` ou des enfants directs de `.shell` : ils
 s'alignent donc exactement sur les mêmes bords. **Ne pas donner de `max-width`
 propre à un bloc interne** — c'est ce qui crée les décalages.
 
@@ -138,12 +149,28 @@ le contenu n'apparaît qu'une fois la page hydratée. C'est le compromis
 habituel d'une page animée ; si ce délai devient gênant, retirer `initial` des
 blocs au-dessus de la ligne de flottaison (`<Stagger now>` du hero).
 
-## Contenu : rien d'inventé
+## Contenu : réel ou déclaré manquant
 
-La page ne contient **ni adresse, ni horaires, ni téléphone, ni prix, ni
-réseaux sociaux** — ces informations n'étaient pas fournies. La section
-« Nous trouver » renvoie pour l'instant vers la carte.
+Les coordonnées affichées dans le pied de page sont **réelles**, reprises de
+l'ancienne version (`legacy-vite/src/App.jsx`) :
 
-Des informations réelles existent dans l'ancienne version (`legacy-vite/`,
-voir son README) : téléphone, pseudo Instagram. Elles n'ont pas été reprises
-ici — à rajouter volontairement, pas par accident.
+- Téléphone **032 63 796 87**, en lien `tel:` au format local — aucun indicatif
+  pays n'a été ajouté, il n'était pas fourni.
+- Instagram **@fresh_sweet_box**. ⚠️ Ce pseudo a été **lu sur le sac kraft**,
+  pas copié depuis le profil : à vérifier avant mise en ligne, le lien part
+  vers un compte externe.
+- Slogan « Eat more color, more Freshness and Sweetness ».
+
+Ce qui n'est pas connu est affiché **en italique et nommé comme manquant**,
+jamais inventé : adresse, horaires, lien Facebook, e-mail. Rien à chercher
+dans le code : ces quatre entrées sont dans `OU_NOUS_TROUVER` et `COMMANDER`
+en tête de `app/page.tsx`.
+
+Il n'y a pas de section de contact dédiée : le bloc vert « Une envie de
+frais ? » a été retiré. L'ancre `#contact` vit sur le `<footer>`, sinon les
+liens qui la visaient (navigation, flèches des cartes) ne pointeraient plus
+nulle part.
+
+La colonne « La carte » du pied de page remplace l'entrée « Questions
+fréquentes » du modèle d'origine par « Notre esprit » : il n'y a pas de FAQ
+sur cette page, le lien n'aurait mené nulle part.

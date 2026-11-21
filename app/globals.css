@@ -1,11 +1,11 @@
 /* =========================================================================
    Fresh & Sweet Box — feuille de style globale
-   1.  Tokens              7.  Section « Les envies du jour »
-   2.  Base / reset        8.  Section « Notre esprit »
-   3.  Grille (shell)      9.  Appel à l'action
-   4.  En-tête & nav       10. Pied de page
-   5.  Hero                11. Responsive
-   6.  Bandeau mots-clés   12. Préférences de mouvement
+   1.  Tokens              6.  Bandeau mots-clés
+   2.  Base / reset        7.  Section « Les envies du jour »
+   3.  Grille (shell)      8.  Section « Notre esprit »
+   4.  En-tête & nav       9.  Pied de page
+   5.  Hero                10. Responsive
+                           11. Préférences de mouvement
    ========================================================================= */
 
 /* 1. Tokens ------------------------------------------------------------- */
@@ -36,7 +36,7 @@
     -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
 
   /* Grille : une seule mesure pour toute la page.
-     Nav, hero, sections, bloc vert et pied de page s'alignent dessus. */
+     Nav, hero, sections et pied de page s'alignent dessus. */
   --measure: 1200px;
   --gutter: clamp(20px, 5.4vw, 78px);
 }
@@ -569,6 +569,7 @@ main:focus {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 22px;
   min-height: 300px;
   padding: clamp(22px, 2.7vw, 32px);
   border: 1px solid rgba(51, 75, 55, 0.05);
@@ -595,24 +596,41 @@ main:focus {
   background: var(--card-sweet);
 }
 
+/* La pastille vit dans le flux, pas en absolu : c'est ce qui garantit
+   qu'elle ne recouvre jamais le titre, à aucune largeur. */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .card-number {
+  padding-top: 4px;
   color: #65765f;
   font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.1em;
 }
 
-.card-icon {
-  position: absolute;
-  top: 26px;
-  right: 25px;
+.card-media {
+  position: relative;
+  flex: none;
   display: grid;
   place-items: center;
-  width: 75px;
-  height: 75px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
+  overflow: hidden;
   background: rgba(255, 255, 255, 0.52);
-  font-size: 34px;
+  /* Sert aussi aux cartes encore illustrées par un emoji. */
+  font-size: 46px;
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .menu-card h3 {
@@ -656,203 +674,151 @@ main:focus {
 /* 8. Section « Notre esprit » ------------------------------------------- */
 .story {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
   align-items: center;
-  gap: clamp(38px, 7vw, 92px);
-  padding: clamp(30px, 5vw, 68px);
-  background: var(--paper);
-  border-radius: 32px;
+  gap: clamp(36px, 5.5vw, 84px);
 }
 
-.story-art {
-  position: relative;
-  display: grid;
-  place-items: center;
-  min-height: clamp(330px, 38vw, 440px);
-  border-radius: 24px;
-  background: var(--peach);
-  overflow: hidden;
-}
-
-.story-art::before,
-.story-art::after {
-  content: "";
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-}
-
-.story-art::after {
-  width: 390px;
-  height: 390px;
-}
-
-/* <Parallax> anime cette couche ; la rotation reste sur .story-photo. */
-.story-photo-wrap {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 100%;
-}
-
+/* Cadre fixe : c'est l'image qui glisse dedans, pas le cadre. */
 .story-photo {
   position: relative;
-  width: 78%;
-  aspect-ratio: 1;
-  border: 9px solid var(--paper);
-  border-radius: 27px;
+  aspect-ratio: 4 / 5;
+  border-radius: 28px;
   overflow: hidden;
-  transform: rotate(-3deg);
-  box-shadow: 0 24px 44px rgba(105, 76, 60, 0.16);
+  background: var(--leaf);
+  box-shadow: 0 26px 52px rgba(51, 75, 55, 0.16);
 }
 
-.story-photo img {
+/* Plus haute que son cadre : la parallaxe ne découvre jamais de bande vide. */
+.story-photo-shift {
+  position: absolute;
+  inset: -7% 0;
+}
+
+.story-photo-shift img {
   object-fit: cover;
 }
 
 .story-copy h2 {
-  margin: 0 0 17px;
+  margin: 0 0 20px;
   font-family: var(--serif);
-  font-size: clamp(36px, 4.6vw, 56px);
+  font-size: clamp(34px, 3.6vw, 50px);
   font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
   color: var(--deep);
 }
 
-.story-copy > p:not(.eyebrow) {
-  margin: 0 0 25px;
+.story-body {
+  margin: 0 0 26px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.8;
 }
 
-.story-points {
+/* Gras et au moins 18,66 px : la framboise passe alors le seuil de contraste
+   « grand texte » (3:1) sur le fond crème, qu'elle ne tient pas en texte
+   courant (3,59:1 contre 4,5:1 requis). */
+.story-quote {
+  margin: 0 0 32px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(21px, 2vw, 27px);
+  line-height: 1.4;
+  color: var(--berry);
+}
+
+/* 9. Pied de page ------------------------------------------------------- */
+/* Le filet est porté par la grille, pas par `.footer` : sur un `.shell` il
+   s'étendrait jusqu'aux gouttières et ne serait plus aligné avec celui du
+   bas, qui lui vit dans la boîte de contenu. */
+.footer {
+  color: var(--muted);
+}
+
+.footer-grid {
+  padding-top: clamp(46px, 5vw, 68px);
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+
+.footer-logo {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.footer-tagline {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* 19 px en gras : au-delà de 18,66 px la framboise relève du seuil
+   « grand texte » (3:1), qu'elle tient — contrairement au seuil du texte
+   courant (4,5:1). */
+.footer-quote {
+  max-width: 30ch;
+  margin: 0;
+  color: var(--berry);
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+.footer .eyebrow {
+  margin-bottom: 18px;
+}
+
+.footer-list {
   display: grid;
   gap: 13px;
-  margin: 0 0 27px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.story-points li {
+.footer-list li {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #4e5f4a;
-  font-size: 13px;
-}
-
-.check {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--leaf);
-  color: var(--deep);
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 800;
-}
-
-/* 9. Appel à l'action ---------------------------------------------------- */
-.closing-wrap {
-  margin-bottom: clamp(64px, 8vw, 96px);
-}
-
-.closing {
-  position: relative;
-  overflow: hidden;
-  padding: clamp(54px, 7vw, 84px) 30px;
-  border-radius: 30px;
-  background: var(--deep);
-  color: #fff;
-  text-align: center;
-}
-
-.closing::before,
-.closing::after {
-  content: "";
-  position: absolute;
-  top: -125px;
-  left: 8%;
-  width: 230px;
-  height: 230px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-}
-
-.closing::after {
-  top: auto;
-  left: auto;
-  right: 4%;
-  bottom: -165px;
-  width: 300px;
-  height: 300px;
-}
-
-.closing h2 {
-  position: relative;
-  margin: 0 0 13px;
-  font-family: var(--serif);
-  font-size: clamp(34px, 5vw, 55px);
-  font-weight: 500;
-  line-height: 1.03;
-}
-
-.closing p {
-  position: relative;
-  margin: 0 0 24px;
-  color: #e1e8db;
   font-size: 14px;
+  line-height: 1.45;
 }
 
-.closing-action {
-  position: relative;
-  z-index: 1;
-}
-
-.closing .button {
-  position: relative;
-  background: #f6b8d6;
-  color: #48243b;
-}
-
-.closing .button:hover {
-  box-shadow: 0 9px 24px rgba(0, 0, 0, 0.22);
-}
-
-/* 10. Pied de page ------------------------------------------------------- */
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding-block: 28px 36px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.footer-links {
-  display: flex;
-  gap: 22px;
-}
-
-.footer a {
-  transition: color 0.2s;
-}
-
-.footer a:hover {
+.footer-icon {
+  flex: none;
   color: var(--berry);
 }
 
-/* 11. Responsive --------------------------------------------------------- */
+.footer-list a {
+  color: var(--ink);
+  transition: color 0.2s;
+}
+
+.footer-list a:hover {
+  color: var(--berry);
+}
+
+/* Information non fournie : affichée en italique, jamais inventée. */
+.footer-todo {
+  font-style: italic;
+}
+
+.footer-legal {
+  margin: clamp(38px, 4.5vw, 58px) 0 0;
+  padding-block: 22px 34px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+}
+
+/* 10. Responsive --------------------------------------------------------- */
 /* En dessous de ~940 px les quatre mots ne tiennent plus sur une ligne :
    le bandeau défile doucement plutôt que d'être rogné. */
 @media (max-width: 940px) {
@@ -960,23 +926,40 @@ main:focus {
     min-height: 220px;
   }
 
-  .card-icon {
-    width: 64px;
-    height: 64px;
-    font-size: 29px;
+  .card-media {
+    width: 92px;
+    height: 92px;
+    font-size: 38px;
   }
 
   .story {
     grid-template-columns: minmax(0, 1fr);
-    gap: 30px;
+    gap: 34px;
   }
 
-  .story-art {
-    min-height: 350px;
+  /* Pleine largeur, le portrait 4/5 serait démesuré : on passe au carré,
+     recadré vers le bas pour garder le bol dans le champ. */
+  .story-photo {
+    aspect-ratio: 1 / 1;
+  }
+
+  .story-photo-shift img {
+    object-position: center 62%;
   }
 
   .story-copy {
     max-width: 600px;
+  }
+
+  /* Les trois colonnes de liens restent côte à côte, la marque passe
+     au-dessus : en deux colonnes « La carte » se retrouvait orpheline. */
+  .footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 38px 26px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1105,45 +1088,47 @@ main:focus {
     font-size: 28px;
   }
 
-  .card-icon {
-    width: 58px;
-    height: 58px;
-    font-size: 26px;
+  .card-media {
+    width: 78px;
+    height: 78px;
+    font-size: 32px;
   }
 
   .story {
-    gap: 25px;
-    padding: 17px;
-    border-radius: 24px;
-  }
-
-  .story-art {
-    min-height: 265px;
+    gap: 26px;
   }
 
   .story-photo {
-    border-width: 7px;
-    border-radius: 20px;
+    border-radius: 22px;
   }
 
-  .closing-wrap {
-    margin-bottom: 58px;
+  .story-quote {
+    margin-bottom: 26px;
   }
 
-  .closing {
-    padding: 45px 18px;
-    border-radius: 24px;
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
   }
 
-  .footer {
-    flex-direction: column;
-    align-items: flex-start;
-    padding-top: 24px;
+  /* Cibles tactiles : les lignes du pied de page passent à 44 px de haut. */
+  .footer-list {
+    gap: 2px;
   }
 
-  .footer-links {
-    flex-wrap: wrap;
-    gap: 15px;
+  .footer-list li {
+    align-items: stretch;
+    min-height: 44px;
+  }
+
+  .footer-icon {
+    align-self: center;
+  }
+
+  .footer-list a,
+  .footer-list .footer-todo {
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -1153,7 +1138,7 @@ main:focus {
   }
 }
 
-/* 12. Préférences de mouvement ------------------------------------------- */
+/* 11. Préférences de mouvement ------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -25,7 +25,7 @@ const MENU_CARDS = [
   {
     theme: "salad",
     number: "01 / LE FRAIS",
-    icon: "🥗",
+    image: "/images/salade-fraiche.jpg",
     title: "Salades fraîches",
     text: "Des légumes croquants, des fruits de saison et des bols généreux.",
     linkLabel: "Découvrir les salades",
@@ -33,7 +33,7 @@ const MENU_CARDS = [
   {
     theme: "juice",
     number: "02 / À SIROTER",
-    icon: "🍓",
+    image: "/images/milkshake.jpg",
     title: "Jus & milkshakes",
     text: "Des mélanges fruités et des boissons gourmandes à emporter.",
     linkLabel: "Découvrir les jus",
@@ -48,11 +48,86 @@ const MENU_CARDS = [
   },
 ];
 
-const STORY_POINTS = [
-  "Des fruits et légumes pleins de couleurs",
-  "Des recettes généreuses et variées",
-  "À savourer où votre journée vous mène",
+/* Coordonnées réelles, reprises de l'ancienne version (`legacy-vite/`).
+   Ce qui n'est pas connu reste affiché en italique, jamais inventé. */
+const OU_NOUS_TROUVER = [
+  { icon: "pin", texte: "Adresse à compléter", aFournir: true },
+  { icon: "clock", texte: "Horaires à compléter", aFournir: true },
 ];
+
+const COMMANDER = [
+  { icon: "phone", texte: "032 63 796 87", href: "tel:0326379687" },
+  {
+    icon: "instagram",
+    texte: "@fresh_sweet_box",
+    href: "https://www.instagram.com/fresh_sweet_box/",
+    externe: true,
+  },
+  { icon: "facebook", texte: "Lien Facebook à compléter", aFournir: true },
+  { icon: "mail", texte: "E-mail à compléter", aFournir: true },
+];
+
+const FOOTER_CARTE = [
+  { href: "#carte", label: "Salades & bols de fruits" },
+  { href: "#carte", label: "Jus & milkshakes" },
+  { href: "#carte", label: "Desserts & healthy" },
+  { href: "#esprit", label: "Notre esprit" },
+];
+
+/* Icônes en SVG tracé, aucune dépendance. Décoratives : le texte à côté
+   porte déjà l'information. */
+const ICONES: Record<string, React.ReactNode> = {
+  pin: (
+    <>
+      <path d="M12 21s6.8-5.7 6.8-11A6.8 6.8 0 0 0 5.2 10c0 5.3 6.8 11 6.8 11Z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.4" />
+      <path d="M12 7.4V12l3.1 1.9" />
+    </>
+  ),
+  phone: (
+    <path d="M6.2 3.6h2.9l1.5 3.6-1.8 1.4a12.4 12.4 0 0 0 5.4 5.4l1.4-1.8 3.6 1.5v2.9a1.8 1.8 0 0 1-1.9 1.8A15.5 15.5 0 0 1 4.4 5.5a1.8 1.8 0 0 1 1.8-1.9Z" />
+  ),
+  instagram: (
+    <>
+      <rect x="3.6" y="3.6" width="16.8" height="16.8" rx="4.6" />
+      <circle cx="12" cy="12" r="3.9" />
+      <path d="M16.9 7.1h.01" />
+    </>
+  ),
+  facebook: (
+    <path d="M13.6 20.4v-7.5h2.5l.4-2.9h-2.9V8.2c0-.84.23-1.4 1.44-1.4h1.54V4.2a20 20 0 0 0-2.25-.11c-2.22 0-3.74 1.35-3.74 3.84v2.14H8.05v2.9h2.54v7.5Z" />
+  ),
+  mail: (
+    <>
+      <rect x="3.3" y="5.6" width="17.4" height="12.8" rx="2.4" />
+      <path d="m3.9 7.1 8.1 5.8 8.1-5.8" />
+    </>
+  ),
+};
+
+function Icone({ nom }: { nom: string }) {
+  return (
+    <svg
+      className="footer-icon"
+      viewBox="0 0 24 24"
+      width="17"
+      height="17"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {ICONES[nom]}
+    </svg>
+  );
+}
 
 function Logo({ size }: { size: number }) {
   return (
@@ -124,7 +199,7 @@ export default function Home() {
               <em>pleine de vie.</em>
             </StaggerItem>
             <StaggerItem as="p" className="intro">
-              Des fruits colorés, des salades croquantes et des douceurs à
+              Des salades de legumes, des fruits colorés,  et des douceurs à
               savourer. Le meilleur du frais, préparé avec soin et prêt à vous
               suivre.
             </StaggerItem>
@@ -241,10 +316,16 @@ export default function Home() {
                 className={`menu-card ${card.theme}`}
                 lift
               >
-                <span className="card-number">{card.number}</span>
-                <span className="card-icon" aria-hidden="true">
-                  {card.icon}
-                </span>
+                <div className="card-top">
+                  <span className="card-number">{card.number}</span>
+                  <span className="card-media" aria-hidden="true">
+                    {card.image ? (
+                      <Image src={card.image} alt="" width={200} height={200} />
+                    ) : (
+                      card.icon
+                    )}
+                  </span>
+                </div>
                 <div>
                   <h3>{card.title}</h3>
                   <p>{card.text}</p>
@@ -264,16 +345,14 @@ export default function Home() {
         {/* Notre esprit ------------------------------------------------ */}
         <section className="shell section" id="esprit">
           <Reveal className="story">
-            <div className="story-art">
-              <Parallax className="story-photo-wrap" distance={18}>
-                <div className="story-photo">
-                  <Image
-                    src="/images/bol-salade-fruits-detail.jpg"
-                    alt="Gros plan du bol de fruits frais devant les collines, avec l'étiquette Fresh & Sweet Box"
-                    fill
-                    sizes="(max-width: 850px) 70vw, 36vw"
-                  />
-                </div>
+            <div className="story-photo">
+              <Parallax className="story-photo-shift" distance={22}>
+                <Image
+                  src="/images/bol-salade-fruits-detail.jpg"
+                  alt="Gros plan du bol de fruits frais devant les collines, avec l'étiquette Fresh & Sweet Box"
+                  fill
+                  sizes="(max-width: 850px) 92vw, 45vw"
+                />
               </Parallax>
             </div>
 
@@ -282,59 +361,98 @@ export default function Home() {
                 Notre esprit
               </StaggerItem>
               <StaggerItem as="h2">
-                Le plaisir du frais, tout simplement.
+                Le frais d’un bar à salade, le plaisir d’un bar à desserts
               </StaggerItem>
-              <StaggerItem as="p">
-                Fresh &amp; Sweet Box réunit les envies salées et sucrées dans
-                un format pratique, coloré et facile à emporter. Une pause toute
-                simple, préparée avec attention.
+              <StaggerItem as="p" className="story-body">
+                Tout part de fruits et légumes coupés le jour même. On compose
+                devant vous, on garnit généreusement, et on referme le gobelet
+                pour que ça voyage bien.
               </StaggerItem>
-              <StaggerItem as="ul" className="story-points">
-                {STORY_POINTS.map((point) => (
-                  <li key={point}>
-                    <i className="check" aria-hidden="true">
-                      ✓
-                    </i>
-                    {point}
-                  </li>
-                ))}
+              <StaggerItem as="p" className="story-quote">
+                « Eat more color, more Freshness and Sweetness »
               </StaggerItem>
               <StaggerItem>
-                <a className="text-link" href="#contact">
-                  Venez nous découvrir <span aria-hidden="true">→</span>
+                <a className="button" href="#carte">
+                  Voir la carte <span aria-hidden="true">→</span>
                 </a>
               </StaggerItem>
             </Stagger>
           </Reveal>
         </section>
-
-        {/* Appel à l'action -------------------------------------------- */}
-        <section className="shell closing-wrap" id="contact">
-          <Stagger className="closing">
-            <StaggerItem as="h2">Une envie de frais ?</StaggerItem>
-            <StaggerItem as="p">
-              Votre prochaine pause gourmande commence ici.
-            </StaggerItem>
-            <StaggerItem className="closing-action">
-              <a className="button" href="#carte">
-                Voir les envies du jour <span aria-hidden="true">→</span>
-              </a>
-            </StaggerItem>
-          </Stagger>
-        </section>
       </main>
 
-      <Reveal as="footer" className="shell footer">
-        <a className="logo" href="#accueil">
-          <Logo size={38} />
-        </a>
-        <span>Salade · Jus · Dessert</span>
-        <nav className="footer-links" aria-label="Liens de pied de page">
-          <a href="#carte">La carte</a>
-          <a href="#esprit">Notre esprit</a>
-          <a href="#contact">Contact</a>
-        </nav>
-        <span>© 2026 Fresh &amp; Sweet Box</span>
+      <Reveal as="footer" className="shell footer" id="contact">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <a
+              className="footer-logo"
+              href="#accueil"
+              aria-label="Fresh & Sweet Box, retour en haut de page"
+            >
+              <Image
+                src="/images/logo-fsb.png"
+                alt=""
+                width={320}
+                height={298}
+                style={{ height: 74, width: "auto" }}
+              />
+            </a>
+            <p className="footer-tagline">
+              Bar à salade, jus et desserts à emporter.
+            </p>
+            <p className="footer-quote">
+              « Eat more color, more Freshness and Sweetness »
+            </p>
+          </div>
+
+          <div>
+            <h2 className="eyebrow">Nous trouver</h2>
+            <ul className="footer-list">
+              {OU_NOUS_TROUVER.map((item) => (
+                <li key={item.texte}>
+                  <Icone nom={item.icon} />
+                  <span className="footer-todo">{item.texte}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="eyebrow">Commander</h2>
+            <ul className="footer-list">
+              {COMMANDER.map((item) => (
+                <li key={item.texte}>
+                  <Icone nom={item.icon} />
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      {...(item.externe
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                    >
+                      {item.texte}
+                    </a>
+                  ) : (
+                    <span className="footer-todo">{item.texte}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="eyebrow">La carte</h2>
+            <ul className="footer-list">
+              {FOOTER_CARTE.map((item) => (
+                <li key={item.label}>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <p className="footer-legal">© 2026 Fresh &amp; Sweet Box</p>
       </Reveal>
     </>
   );
