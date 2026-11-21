@@ -1,0 +1,1192 @@
+/* =========================================================================
+   Fresh & Sweet Box — feuille de style globale
+   1.  Tokens              7.  Section « Les envies du jour »
+   2.  Base / reset        8.  Section « Notre esprit »
+   3.  Grille (shell)      9.  Appel à l'action
+   4.  En-tête & nav       10. Pied de page
+   5.  Hero                11. Responsive
+   6.  Bandeau mots-clés   12. Préférences de mouvement
+   ========================================================================= */
+
+/* 1. Tokens ------------------------------------------------------------- */
+:root {
+  /* Palette */
+  --cream: #f8f6ec;
+  --paper: #fffefa;
+  --deep: #334b37;
+  --sage: #748c66;
+  --leaf: #dce6d1;
+  --berry: #d94e88;
+  --peach: #f8d9ca;
+  --ink: #28382b;
+  --muted: #697365;
+  --line: #e5e5d8;
+
+  /* Fonds pastel des cartes */
+  --card-salad: #e5ecd9;
+  --card-juice: #f8e0e9;
+  --card-sweet: #f5e6d4;
+
+  /* Typographie : serif pour les grands titres, sans-serif pour le texte.
+     Aucune police distante n'est chargée — la page s'appuie sur des familles
+     présentes sur le système, Inter en tête si elle est installée. Pour
+     passer à une police hébergée, voir la note « Typographie » du README. */
+  --serif: Georgia, "Times New Roman", Times, serif;
+  --sans: Inter, "Inter Variable", "Avenir Next", Avenir, system-ui,
+    -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
+
+  /* Grille : une seule mesure pour toute la page.
+     Nav, hero, sections, bloc vert et pied de page s'alignent dessus. */
+  --measure: 1200px;
+  --gutter: clamp(20px, 5.4vw, 78px);
+}
+
+/* 2. Base --------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+  /* Les formes décoratives en rotation dépassent de quelques pixels : on les
+     rogne ici, sinon le dépassement crée une barre de défilement horizontale.
+     `clip` ne crée pas de conteneur de défilement, contrairement à `hidden`. */
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--berry);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: -9999px;
+  z-index: 50;
+  padding: 12px 20px;
+  background: var(--deep);
+  color: #fff;
+  border-radius: 0 0 14px 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* 3. Grille ------------------------------------------------------------- */
+.shell {
+  width: 100%;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* 4. En-tête & navigation ----------------------------------------------- */
+.topline {
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 8px 20px;
+  background: var(--deep);
+  color: #fff;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 86px;
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--deep);
+}
+
+.logo-mark {
+  flex: none;
+  display: block;
+  width: auto;
+}
+
+.navlinks {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 42px);
+  font-size: 13px;
+  font-weight: 650;
+  color: #4f5c4c;
+}
+
+.navlinks a {
+  padding: 8px 0;
+  transition: color 0.2s;
+}
+
+.navlinks a:hover {
+  color: var(--berry);
+}
+
+.nav-action,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 14px 21px;
+  border-radius: 999px;
+  background: var(--berry);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 750;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nav-action:hover,
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 24px rgba(217, 78, 136, 0.28);
+}
+
+.menu-toggle {
+  display: none;
+  padding: 10px;
+  margin-right: -10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--deep);
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* 5. Hero --------------------------------------------------------------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  align-items: center;
+  gap: clamp(38px, 6.2vw, 88px);
+  min-height: clamp(600px, 68vw, 760px);
+  padding-block: clamp(62px, 7vw, 96px);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  color: var(--sage);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.kicker::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: var(--berry);
+}
+
+.hero h1 {
+  margin: 0 0 23px;
+  font-family: var(--serif);
+  font-size: clamp(56px, 7.3vw, 98px);
+  font-weight: 500;
+  line-height: 0.93;
+  letter-spacing: -0.055em;
+  color: var(--deep);
+}
+
+.hero h1 em {
+  color: var(--berry);
+  font-weight: 500;
+}
+
+.intro {
+  max-width: 43ch;
+  margin: 0 0 29px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.text-link {
+  display: inline-block;
+  padding: 12px 0;
+  border-bottom: 1px solid #abb59f;
+  color: var(--deep);
+  font-size: 13px;
+  font-weight: 700;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.text-link:hover {
+  color: var(--berry);
+  border-color: var(--berry);
+}
+
+.hero-note {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 42px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.hero-note b {
+  color: var(--deep);
+}
+
+.avatars {
+  display: flex;
+  flex: none;
+}
+
+.avatars span {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  margin-left: -7px;
+  border: 2px solid var(--cream);
+  border-radius: 50%;
+  background: var(--leaf);
+  font-size: 13px;
+}
+
+.avatars span:first-child {
+  margin-left: 0;
+  background: var(--peach);
+}
+
+.hero-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(430px, 42vw, 560px);
+  padding: 18px;
+}
+
+.photo-backdrop {
+  position: absolute;
+  inset: 8% 1% 1% 12%;
+  border-radius: 48% 48% 40px 40px;
+  background: var(--leaf);
+  transform: rotate(-7deg);
+}
+
+/* <FloatIn> anime cette couche ; la rotation reste sur .photo-frame.
+   Un élément n'anime qu'un seul `transform`. */
+.photo-float {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+.photo-frame {
+  position: relative;
+  width: min(100%, 510px);
+  aspect-ratio: 1 / 1.02;
+  padding: 14px;
+  background: #fff;
+  border-radius: 48% 48% 40px 40px;
+  box-shadow: 0 32px 64px rgba(68, 87, 61, 0.14),
+    0 3px 10px rgba(68, 87, 61, 0.05);
+  transform: rotate(2deg);
+}
+
+.photo-frame__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 48% 48% 30px 30px;
+  overflow: hidden;
+}
+
+.photo-frame__inner img {
+  object-fit: cover;
+}
+
+.photo-sticker-wrap {
+  position: absolute;
+  z-index: 3;
+  left: -23px;
+  bottom: 54px;
+}
+
+.photo-sticker {
+  margin: 0;
+  padding: 15px 18px;
+  background: var(--paper);
+  color: var(--deep);
+  border-radius: 17px;
+  box-shadow: 0 12px 30px rgba(51, 75, 55, 0.13);
+  font-family: var(--serif);
+  font-size: 17px;
+  transform: rotate(-7deg);
+}
+
+.photo-sticker small {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--sage);
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.fruit-dot {
+  position: absolute;
+  z-index: 2;
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(101, 55, 74, 0.13);
+}
+
+.dot-berry {
+  top: 15%;
+  right: 3%;
+  width: 42px;
+  height: 42px;
+  background: var(--berry);
+}
+
+.dot-peach {
+  top: 17%;
+  left: 8%;
+  width: 25px;
+  height: 25px;
+  background: #efb64d;
+}
+
+/* Second cliché du hero : le versant sucré de la carte. */
+.hero-polaroid-wrap {
+  position: absolute;
+  z-index: 3;
+  right: -14px;
+  bottom: 7%;
+}
+
+.hero-polaroid {
+  position: relative;
+  width: 152px;
+  aspect-ratio: 3 / 4;
+  border: 8px solid var(--paper);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 18px 38px rgba(51, 75, 55, 0.2);
+  transform: rotate(7deg);
+}
+
+.hero-polaroid img {
+  object-fit: cover;
+}
+
+/* 6. Bandeau de mots-clés ----------------------------------------------- */
+.ticker {
+  overflow: hidden;
+  padding: 17px 0;
+  background: var(--leaf);
+  color: var(--deep);
+}
+
+.ticker-track {
+  display: flex;
+}
+
+.ticker-group {
+  display: flex;
+  flex: 1 1 100%;
+  justify-content: space-around;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  white-space: nowrap;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+}
+
+/* Le second exemplaire ne sert qu'au défilement sur petit écran. */
+.ticker-group + .ticker-group {
+  display: none;
+}
+
+.ticker-group li::after {
+  content: "✳";
+  padding-inline: 28px;
+  color: var(--berry);
+  font-style: normal;
+}
+
+/* Sur grand écran le dernier mot n'est suivi de rien ; sur petit écran le
+   séparateur est conservé pour que la boucle de défilement reste continue. */
+@media (min-width: 941px) {
+  .ticker-group li:last-child::after {
+    content: none;
+  }
+}
+
+@keyframes ticker-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* 7. Section « Les envies du jour » ------------------------------------- */
+.section {
+  padding-block: clamp(82px, 9vw, 120px);
+}
+
+/* Deux sections consécutives n'additionnent pas leurs marges : l'espace
+   entre elles reste du même ordre que l'espace intérieur d'une section. */
+.section + .section {
+  padding-top: clamp(24px, 3.5vw, 48px);
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: clamp(28px, 4vw, 42px);
+}
+
+.eyebrow {
+  margin: 0 0 13px;
+  color: var(--berry);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.section h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(38px, 5.1vw, 62px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--deep);
+}
+
+.section-head > p {
+  max-width: 360px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 22px);
+}
+
+.menu-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 300px;
+  padding: clamp(22px, 2.7vw, 32px);
+  border: 1px solid rgba(51, 75, 55, 0.05);
+  border-radius: 25px;
+  overflow: hidden;
+  /* Le déplacement au survol est porté par Framer Motion (`lift`) : le laisser
+     aussi en CSS créerait deux sources de `transform` pour le même élément. */
+  transition: box-shadow 0.22s;
+}
+
+.menu-card:hover {
+  box-shadow: 0 16px 34px rgba(51, 75, 55, 0.08);
+}
+
+.menu-card.salad {
+  background: var(--card-salad);
+}
+
+.menu-card.juice {
+  background: var(--card-juice);
+}
+
+.menu-card.sweet {
+  background: var(--card-sweet);
+}
+
+.card-number {
+  color: #65765f;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+}
+
+.card-icon {
+  position: absolute;
+  top: 26px;
+  right: 25px;
+  display: grid;
+  place-items: center;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.52);
+  font-size: 34px;
+}
+
+.menu-card h3 {
+  margin: 0 0 9px;
+  font-family: var(--serif);
+  font-size: 31px;
+  font-weight: 500;
+  color: var(--deep);
+}
+
+.menu-card p {
+  max-width: 265px;
+  margin: 0;
+  color: #5f6b5c;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-top: 22px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--deep);
+  font-size: 19px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.menu-card:hover .arrow-link {
+  transform: translateX(4px);
+}
+
+.arrow-link:hover {
+  background: #fff;
+}
+
+/* 8. Section « Notre esprit » ------------------------------------------- */
+.story {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: clamp(38px, 7vw, 92px);
+  padding: clamp(30px, 5vw, 68px);
+  background: var(--paper);
+  border-radius: 32px;
+}
+
+.story-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(330px, 38vw, 440px);
+  border-radius: 24px;
+  background: var(--peach);
+  overflow: hidden;
+}
+
+.story-art::before,
+.story-art::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+}
+
+.story-art::after {
+  width: 390px;
+  height: 390px;
+}
+
+/* <Parallax> anime cette couche ; la rotation reste sur .story-photo. */
+.story-photo-wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+.story-photo {
+  position: relative;
+  width: 78%;
+  aspect-ratio: 1;
+  border: 9px solid var(--paper);
+  border-radius: 27px;
+  overflow: hidden;
+  transform: rotate(-3deg);
+  box-shadow: 0 24px 44px rgba(105, 76, 60, 0.16);
+}
+
+.story-photo img {
+  object-fit: cover;
+}
+
+.story-copy h2 {
+  margin: 0 0 17px;
+  font-family: var(--serif);
+  font-size: clamp(36px, 4.6vw, 56px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  color: var(--deep);
+}
+
+.story-copy > p:not(.eyebrow) {
+  margin: 0 0 25px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.story-points {
+  display: grid;
+  gap: 13px;
+  margin: 0 0 27px;
+  padding: 0;
+  list-style: none;
+}
+
+.story-points li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #4e5f4a;
+  font-size: 13px;
+}
+
+.check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--leaf);
+  color: var(--deep);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+/* 9. Appel à l'action ---------------------------------------------------- */
+.closing-wrap {
+  margin-bottom: clamp(64px, 8vw, 96px);
+}
+
+.closing {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(54px, 7vw, 84px) 30px;
+  border-radius: 30px;
+  background: var(--deep);
+  color: #fff;
+  text-align: center;
+}
+
+.closing::before,
+.closing::after {
+  content: "";
+  position: absolute;
+  top: -125px;
+  left: 8%;
+  width: 230px;
+  height: 230px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+}
+
+.closing::after {
+  top: auto;
+  left: auto;
+  right: 4%;
+  bottom: -165px;
+  width: 300px;
+  height: 300px;
+}
+
+.closing h2 {
+  position: relative;
+  margin: 0 0 13px;
+  font-family: var(--serif);
+  font-size: clamp(34px, 5vw, 55px);
+  font-weight: 500;
+  line-height: 1.03;
+}
+
+.closing p {
+  position: relative;
+  margin: 0 0 24px;
+  color: #e1e8db;
+  font-size: 14px;
+}
+
+.closing-action {
+  position: relative;
+  z-index: 1;
+}
+
+.closing .button {
+  position: relative;
+  background: #f6b8d6;
+  color: #48243b;
+}
+
+.closing .button:hover {
+  box-shadow: 0 9px 24px rgba(0, 0, 0, 0.22);
+}
+
+/* 10. Pied de page ------------------------------------------------------- */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding-block: 28px 36px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 22px;
+}
+
+.footer a {
+  transition: color 0.2s;
+}
+
+.footer a:hover {
+  color: var(--berry);
+}
+
+/* 11. Responsive --------------------------------------------------------- */
+/* En dessous de ~940 px les quatre mots ne tiennent plus sur une ligne :
+   le bandeau défile doucement plutôt que d'être rogné. */
+@media (max-width: 940px) {
+  .ticker-track {
+    width: max-content;
+    animation: ticker-slide 26s linear infinite;
+  }
+
+  .ticker-group {
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    width: max-content;
+  }
+
+  .ticker-group + .ticker-group {
+    display: flex;
+  }
+}
+
+@media (max-width: 850px) {
+  .navlinks {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-action {
+    margin-left: auto;
+  }
+
+  /* Panneau déroulant, calé sous la barre quelle que soit sa hauteur.
+     Il n'existe dans le DOM que lorsqu'il est ouvert. */
+  .menu-panel {
+    position: absolute;
+    z-index: 5;
+    top: calc(100% + 10px);
+    left: var(--gutter);
+    right: var(--gutter);
+    display: grid;
+    gap: 2px;
+    padding: 10px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 16px 32px rgba(40, 56, 43, 0.12);
+    font-size: 14px;
+    font-weight: 650;
+    color: #4f5c4c;
+  }
+
+  .menu-panel a {
+    padding: 15px 14px;
+    border-radius: 12px;
+  }
+
+  .menu-panel a:hover {
+    background: var(--leaf);
+    color: var(--deep);
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    min-height: 0;
+    padding-block: 58px 54px;
+  }
+
+  .hero-copy {
+    max-width: 650px;
+  }
+
+  /* Une fois empilé, le visuel garde une largeur propre : les éléments
+     flottants restent collés au cadre au lieu de partir aux bords. */
+  .hero-visual {
+    min-height: 0;
+    /* `width: 100%` est indispensable : sans lui, `margin-inline: auto`
+       dimensionne cet élément de grille sur son contenu, et le visuel
+       dépasse la colonne. */
+    width: 100%;
+    max-width: 540px;
+    margin-inline: auto;
+    padding: 14px 26px 26px;
+  }
+
+  .photo-frame {
+    width: min(78vw, 470px);
+  }
+
+  .section {
+    padding-block: 76px;
+  }
+
+  .section-head {
+    display: grid;
+    gap: 15px;
+  }
+
+  .menu-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .menu-card {
+    min-height: 220px;
+  }
+
+  .card-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 29px;
+  }
+
+  .story {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+  }
+
+  .story-art {
+    min-height: 350px;
+  }
+
+  .story-copy {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --gutter: 20px;
+  }
+
+  .topline {
+    min-height: 32px;
+    font-size: 9px;
+    letter-spacing: 0.07em;
+  }
+
+  .nav {
+    min-height: 70px;
+    gap: 12px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-action {
+    display: none;
+  }
+
+  .hero {
+    padding-block: 43px 42px;
+    gap: 14px;
+  }
+
+  .hero .kicker {
+    margin-bottom: 17px;
+  }
+
+  .hero h1 {
+    margin-bottom: 18px;
+    font-size: clamp(54px, 14.4vw, 76px);
+    line-height: 0.94;
+  }
+
+  .intro {
+    max-width: 37ch;
+    margin-bottom: 22px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .hero-note {
+    margin-top: 27px;
+  }
+
+  .hero-visual {
+    padding: 4px 22px 18px;
+  }
+
+  .hero-polaroid-wrap {
+    display: none;
+  }
+
+  /* Bornée à la largeur disponible : au-delà, la taille minimale
+     automatique de l'élément de grille décentre le cadre vers la droite. */
+  .photo-frame {
+    width: min(100%, 410px);
+    padding: 9px;
+    border-radius: 48% 48% 28px 28px;
+  }
+
+  .photo-frame__inner {
+    border-radius: 48% 48% 20px 20px;
+  }
+
+  .photo-sticker {
+    left: -7px;
+    bottom: 33px;
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .dot-berry {
+    right: 0;
+    width: 31px;
+    height: 31px;
+  }
+
+  .dot-peach {
+    width: 19px;
+    height: 19px;
+  }
+
+  .leaf-shape {
+    width: 45px;
+    height: 25px;
+  }
+
+  .ticker-group {
+    font-size: 15px;
+  }
+
+  .section {
+    padding-block: 62px;
+  }
+
+  .section-head {
+    gap: 13px;
+    margin-bottom: 23px;
+  }
+
+  .section-head > p {
+    max-width: none;
+    font-size: 13px;
+  }
+
+  .menu-card {
+    min-height: 225px;
+    padding: 22px;
+  }
+
+  .menu-card h3 {
+    font-size: 28px;
+  }
+
+  .card-icon {
+    width: 58px;
+    height: 58px;
+    font-size: 26px;
+  }
+
+  .story {
+    gap: 25px;
+    padding: 17px;
+    border-radius: 24px;
+  }
+
+  .story-art {
+    min-height: 265px;
+  }
+
+  .story-photo {
+    border-width: 7px;
+    border-radius: 20px;
+  }
+
+  .closing-wrap {
+    margin-bottom: 58px;
+  }
+
+  .closing {
+    padding: 45px 18px;
+    border-radius: 24px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 24px;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+}
+
+@media (min-width: 851px) {
+  .menu-panel {
+    display: none;
+  }
+}
+
+/* 12. Préférences de mouvement ------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Sans animation, le bandeau passe à la ligne au lieu de défiler. */
+@media (prefers-reduced-motion: reduce) and (max-width: 940px) {
+  .ticker-track {
+    width: auto;
+  }
+
+  .ticker-group {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    row-gap: 6px;
+    white-space: normal;
+  }
+
+  .ticker-group + .ticker-group {
+    display: none;
+  }
+
+  .ticker-group li:last-child::after {
+    content: none;
+  }
+}
