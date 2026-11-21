@@ -18,10 +18,22 @@ const TICKER_WORDS = [
   "Fruits choisis avec soin",
   "Salades fraîches",
   "Jus & milkshakes",
-  "Petites douceurs",
 ];
 
-const MENU_CARDS = [
+/* Une carte s'illustre soit par une photo, soit par un emoji en attendant
+   la sienne. Le type garde les deux possibles même quand toutes les cartes
+   en place ont une photo. */
+type CarteMenu = {
+  theme: string;
+  number: string;
+  title: string;
+  text: string;
+  linkLabel: string;
+  image?: string;
+  icon?: string;
+};
+
+const MENU_CARDS: CarteMenu[] = [
   {
     theme: "salad",
     number: "01 / LE FRAIS",
@@ -38,23 +50,10 @@ const MENU_CARDS = [
     text: "Des mélanges fruités et des boissons gourmandes à emporter.",
     linkLabel: "Découvrir les jus",
   },
-  {
-    theme: "sweet",
-    number: "03 / LA DOUCEUR",
-    icon: "🍰",
-    title: "Desserts & healthy",
-    text: "Yaourts garnis, salade de fruits et douceurs pour finir en beauté.",
-    linkLabel: "Découvrir les desserts",
-  },
 ];
 
 /* Coordonnées réelles, reprises de l'ancienne version (`legacy-vite/`).
    Ce qui n'est pas connu reste affiché en italique, jamais inventé. */
-const OU_NOUS_TROUVER = [
-  { icon: "pin", texte: "Adresse à compléter", aFournir: true },
-  { icon: "clock", texte: "Horaires à compléter", aFournir: true },
-];
-
 const COMMANDER = [
   { icon: "phone", texte: "032 63 796 87", href: "tel:0326379687" },
   {
@@ -63,32 +62,25 @@ const COMMANDER = [
     href: "https://www.instagram.com/fresh_sweet_box/",
     externe: true,
   },
-  { icon: "facebook", texte: "Lien Facebook à compléter", aFournir: true },
+  {
+    icon: "facebook",
+    texte: "Notre page Facebook",
+    href: "https://www.facebook.com/profile.php?id=100069940306804",
+    externe: true,
+  },
   { icon: "mail", texte: "E-mail à compléter", aFournir: true },
 ];
 
 const FOOTER_CARTE = [
   { href: "#carte", label: "Salades & bols de fruits" },
   { href: "#carte", label: "Jus & milkshakes" },
-  { href: "#carte", label: "Desserts & healthy" },
+  { href: "#carte", label: "Dessert" },
   { href: "#esprit", label: "Notre esprit" },
 ];
 
 /* Icônes en SVG tracé, aucune dépendance. Décoratives : le texte à côté
    porte déjà l'information. */
 const ICONES: Record<string, React.ReactNode> = {
-  pin: (
-    <>
-      <path d="M12 21s6.8-5.7 6.8-11A6.8 6.8 0 0 0 5.2 10c0 5.3 6.8 11 6.8 11Z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </>
-  ),
-  clock: (
-    <>
-      <circle cx="12" cy="12" r="8.4" />
-      <path d="M12 7.4V12l3.1 1.9" />
-    </>
-  ),
   phone: (
     <path d="M6.2 3.6h2.9l1.5 3.6-1.8 1.4a12.4 12.4 0 0 0 5.4 5.4l1.4-1.8 3.6 1.5v2.9a1.8 1.8 0 0 1-1.9 1.8A15.5 15.5 0 0 1 4.4 5.5a1.8 1.8 0 0 1 1.8-1.9Z" />
   ),
@@ -174,7 +166,10 @@ export default function Home() {
         <MobileNav
           cta={
             <a className="nav-action" href="#carte">
-              Découvrir la carte <span aria-hidden="true">↗</span>
+              Découvrir la carte
+              <span className="button__icon" aria-hidden="true">
+                →
+              </span>
             </a>
           }
         >
@@ -205,9 +200,12 @@ export default function Home() {
             </StaggerItem>
             <StaggerItem className="hero-actions">
               <a className="button" href="#carte">
-                Explorer la carte <span aria-hidden="true">→</span>
+                Explorer la carte
+                <span className="button__icon" aria-hidden="true">
+                  →
+                </span>
               </a>
-              <a className="text-link" href="#esprit">
+              <a className="button-ghost" href="#esprit">
                 Découvrir notre histoire
               </a>
             </StaggerItem>
@@ -258,8 +256,8 @@ export default function Home() {
             >
               <div className="hero-polaroid">
                 <Image
-                  src="/images/cake-cafe.jpg"
-                  alt="Tasse de café, tranches de cake marbré, fraises et quartiers de mandarine sur une assiette"
+                  src="/images/milkshake-hero.jpg"
+                  alt="Milkshake rose Fresh & Sweet Box, chantilly, coulis de fraise, bord chocolaté et billes colorées"
                   fill
                   sizes="170px"
                 />
@@ -373,7 +371,10 @@ export default function Home() {
               </StaggerItem>
               <StaggerItem>
                 <a className="button" href="#carte">
-                  Voir la carte <span aria-hidden="true">→</span>
+                  Voir la carte
+                  <span className="button__icon" aria-hidden="true">
+                    →
+                  </span>
                 </a>
               </StaggerItem>
             </Stagger>
@@ -406,19 +407,7 @@ export default function Home() {
           </div>
 
           <div>
-            <h2 className="eyebrow">Nous trouver</h2>
-            <ul className="footer-list">
-              {OU_NOUS_TROUVER.map((item) => (
-                <li key={item.texte}>
-                  <Icone nom={item.icon} />
-                  <span className="footer-todo">{item.texte}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="eyebrow">Commander</h2>
+            <h2 className="eyebrow">Contacter</h2>
             <ul className="footer-list">
               {COMMANDER.map((item) => (
                 <li key={item.texte}>

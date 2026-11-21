@@ -33,10 +33,12 @@ généré, rien ne provient d'une URL distante.
 |---|---|---|
 | `logo-fsb.png` | Barre de navigation et pied de page | Fond blanc **détouré** par remplissage depuis les bords, ce qui préserve les blancs intérieurs du badge. Rogné puis réduit à 320 px. |
 | `bol-salade-fruits.jpg` | Visuel principal du hero | Réduit à 1100 px. |
-| `cake-cafe.jpg` | Second cliché du hero (polaroid flottant) | **Recadré sur l'assiette** : la nappe rouge et le tissu zébré du cliché d'origine tiraient l'œil hors de la palette. |
+| `milkshake-hero.jpg` | Second cliché du hero (polaroid flottant) | Cadre natif 3:4, aucun recadrage — le polaroid attend exactement ce ratio. Réduit à 480 px. |
 | `bol-salade-fruits-detail.jpg` | Section « Notre esprit » | Réduit à 900 px. |
 | `salade-fraiche.jpg` | Pastille de la carte « Salades fraîches » | **Recadré carré** et recentré sur le bol, pour tenir dans un masque rond de 100 px. |
 | `milkshake.jpg` | Pastille de la carte « Jus & milkshakes » | **Recadré carré** sur le gobelet, ce qui écarte l'arrière-plan de salle. Logo lisible et correct. |
+
+`cake-cafe.jpg` n'est plus référencé depuis que le polaroid du hero est passé au milkshake. Il reste dans `public/images/` ; son original n'existe plus ailleurs, d'où sa conservation.
 
 Le polaroid du hero est masqué en dessous de 600 px : à cette largeur il
 entrerait en concurrence avec la pastille « faite avec amour ».
@@ -118,22 +120,47 @@ jusqu'à la racine.
 
 ## Typographie
 
-Aucune police distante n'est chargée. Les grands titres utilisent **Georgia**
-(serif, présente partout), le texte courant la pile **Inter → system-ui**.
-C'est la pile déclarée dans la maquette de référence, et elle évite tout
-décalage de mise en page au chargement.
+Les piles sont **celles du site en ligne** (`fresh-sweet-box.zaika.mg`) :
 
-Pour passer à une police hébergée, remplacer le token `--sans` et ajouter dans
-`app/layout.tsx` :
-
-```tsx
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-sans" });
-// puis : <html lang="fr" className={inter.variable} data-scroll-behavior="smooth">
+```css
+--font-display: "Poppins", "Avenir Next", system-ui, sans-serif;   /* titres */
+--font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", …;   /* texte */
 ```
 
-`next/font` télécharge la police au moment du build : la machine doit pouvoir
-joindre `fonts.gstatic.com`.
+Réglages des titres repris tels quels du site : **graisse 600**, approche
+`-0.02em`, interlignage `1.14`, `text-wrap: balance`. Les citations sont en
+display **italique 500**. Pas de serif sur la page.
+
+⚠️ **Ni Poppins ni DM Sans ne sont chargées** : `fonts.gstatic.com` est
+injoignable depuis la machine de développement, seul `fonts.googleapis.com`
+répond. Le repli système s'applique donc (SF Pro / Segoe UI). Depuis un réseau
+qui laisse passer Google Fonts, trois lignes suffisent dans `app/layout.tsx` :
+
+```tsx
+import { Poppins, DM_Sans } from "next/font/google";
+const display = Poppins({ subsets: ["latin"], weight: ["500","600","700"], style: ["normal","italic"], variable: "--font-display" });
+const sans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
+// puis : <html lang="fr" className={`${display.variable} ${sans.variable}`} data-scroll-behavior="smooth">
+```
+
+Les deux tokens ci-dessus deviennent alors inutiles dans `globals.css`.
+
+### Deux roses, pas un
+
+Comme sur le site en ligne (`pink-600` pour les aplats, `pink-700` pour le
+texte), la page distingue :
+
+| Token | Valeur | Usage | Contraste sur crème |
+|---|---|---|---|
+| `--berry` | `#d94e88` | Aplats : boutons, pastilles, points | 3,59:1 — **jamais en texte courant** |
+| `--berry-text` | `#bb3669` | Surtitres, citations, accent du titre | 5,04:1 ✓ |
+
+C'est ce qui règle le défaut signalé plus tôt : la framboise d'origine
+plafonnait sous le seuil de 4,5:1 dès qu'elle portait du texte.
+
+Le blanc sur `--berry` des boutons tient parce que le texte y est à **19 px /
+700**, donc « grand texte » (seuil 3:1). Le bouton de la barre de navigation,
+à 14 px, reste en dessous.
 
 ## Accessibilité
 
@@ -159,10 +186,12 @@ l'ancienne version (`legacy-vite/src/App.jsx`) :
 - Instagram **@fresh_sweet_box**. ⚠️ Ce pseudo a été **lu sur le sac kraft**,
   pas copié depuis le profil : à vérifier avant mise en ligne, le lien part
   vers un compte externe.
+- Facebook : lien **fourni directement par le client**, donc fiable,
+  contrairement au pseudo Instagram.
 - Slogan « Eat more color, more Freshness and Sweetness ».
 
 Ce qui n'est pas connu est affiché **en italique et nommé comme manquant**,
-jamais inventé : adresse, horaires, lien Facebook, e-mail. Rien à chercher
+jamais inventé : il ne reste que l'e-mail. Rien à chercher
 dans le code : ces quatre entrées sont dans `OU_NOUS_TROUVER` et `COMMANDER`
 en tête de `app/page.tsx`.
 

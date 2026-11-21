@@ -17,6 +17,10 @@
   --sage: #748c66;
   --leaf: #dce6d1;
   --berry: #d94e88;
+  /* Framboise assombrie pour le texte : #d94e88 plafonne à 3,59:1 sur
+     crème, sous le seuil de 4,5:1. Celle-ci tient 5,04:1. Les aplats
+     (boutons, pastilles) gardent --berry. */
+  --berry-text: #bb3669;
   --peach: #f8d9ca;
   --ink: #28382b;
   --muted: #697365;
@@ -25,15 +29,18 @@
   /* Fonds pastel des cartes */
   --card-salad: #e5ecd9;
   --card-juice: #f8e0e9;
-  --card-sweet: #f5e6d4;
 
   /* Typographie : serif pour les grands titres, sans-serif pour le texte.
      Aucune police distante n'est chargée — la page s'appuie sur des familles
      présentes sur le système, Inter en tête si elle est installée. Pour
      passer à une police hébergée, voir la note « Typographie » du README. */
-  --serif: Georgia, "Times New Roman", Times, serif;
-  --sans: Inter, "Inter Variable", "Avenir Next", Avenir, system-ui,
-    -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
+  /* Mêmes piles que fresh-sweet-box.zaika.mg : Poppins pour les titres,
+     DM Sans pour le texte. Ni l'une ni l'autre n'est chargée ici
+     (fonts.gstatic.com injoignable depuis cette machine) : le repli
+     système s'applique. Voir la note « Typographie » du README. */
+  --font-display: "Poppins", "Avenir Next", system-ui, sans-serif;
+  --font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI",
+    "Helvetica Neue", sans-serif;
 
   /* Grille : une seule mesure pour toute la page.
      Nav, hero, sections et pied de page s'alignent dessus. */
@@ -61,7 +68,7 @@ body {
   margin: 0;
   background: var(--cream);
   color: var(--ink);
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.6;
   overflow-x: clip;
@@ -153,9 +160,10 @@ main:focus {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--serif);
+  font-family: var(--font-display);
   font-size: 21px;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--deep);
 }
 
@@ -183,25 +191,81 @@ main:focus {
   color: var(--berry);
 }
 
+/* Bouton principal : pilule pleine, la flèche vit dans une pastille blanche.
+   19 px en gras place le texte dans la catégorie « grand texte » (seuil 3:1),
+   que le blanc sur framboise tient (3,89:1) — en dessous de 18,66 px il
+   faudrait 4,5:1, hors de portée de cette couleur. */
 .nav-action,
 .button {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 11px;
-  padding: 14px 21px;
+  gap: 14px;
+  padding: 9px 9px 9px 28px;
   border-radius: 999px;
   background: var(--berry);
   color: #fff;
-  font-size: 13px;
-  font-weight: 750;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
   transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.button__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--berry);
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 0.2s;
 }
 
 .nav-action:hover,
 .button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 9px 24px rgba(217, 78, 136, 0.28);
+  box-shadow: 0 10px 26px rgba(217, 78, 136, 0.3);
+}
+
+.nav-action:hover .button__icon,
+.button:hover .button__icon {
+  transform: translateX(3px);
+}
+
+/* Bouton secondaire : même gabarit, contour fin, pas de pastille. */
+.button-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 15px 30px;
+  border: 1px solid rgba(51, 75, 55, 0.28);
+  border-radius: 999px;
+  color: var(--deep);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.button-ghost:hover {
+  transform: translateY(-2px);
+  border-color: var(--deep);
+  background: rgba(51, 75, 55, 0.04);
+}
+
+/* Variante compacte pour la barre de navigation. */
+.nav-action {
+  gap: 11px;
+  padding: 7px 7px 7px 22px;
+  font-size: 14px;
+}
+
+.nav-action .button__icon {
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
 }
 
 .menu-toggle {
@@ -220,17 +284,19 @@ main:focus {
 /* 5. Hero --------------------------------------------------------------- */
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   align-items: center;
   gap: clamp(38px, 6.2vw, 88px);
   min-height: clamp(600px, 68vw, 760px);
   padding-block: clamp(62px, 7vw, 96px);
 }
 
+/* 600 px : en dessous, les deux boutons du hero ne tiennent plus sur une
+   ligne à 19 px et passent l'un sous l'autre. */
 .hero-copy {
   position: relative;
   z-index: 2;
-  max-width: 560px;
+  max-width: 600px;
 }
 
 .kicker {
@@ -239,9 +305,9 @@ main:focus {
   gap: 10px;
   margin: 0 0 22px;
   color: var(--sage);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.17em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
@@ -254,17 +320,18 @@ main:focus {
 
 .hero h1 {
   margin: 0 0 23px;
-  font-family: var(--serif);
-  font-size: clamp(56px, 7.3vw, 98px);
-  font-weight: 500;
-  line-height: 0.93;
-  letter-spacing: -0.055em;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 68px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
   color: var(--deep);
 }
 
 .hero h1 em {
-  color: var(--berry);
-  font-weight: 500;
+  color: var(--berry-text);
+  font-weight: 600;
 }
 
 .intro {
@@ -278,23 +345,8 @@ main:focus {
 .hero-actions {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 16px;
   flex-wrap: wrap;
-}
-
-.text-link {
-  display: inline-block;
-  padding: 12px 0;
-  border-bottom: 1px solid #abb59f;
-  color: var(--deep);
-  font-size: 13px;
-  font-weight: 700;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.text-link:hover {
-  color: var(--berry);
-  border-color: var(--berry);
 }
 
 .hero-note {
@@ -397,7 +449,7 @@ main:focus {
   color: var(--deep);
   border-radius: 17px;
   box-shadow: 0 12px 30px rgba(51, 75, 55, 0.13);
-  font-family: var(--serif);
+  font-family: var(--font-display);
   font-size: 17px;
   transform: rotate(-7deg);
 }
@@ -406,7 +458,7 @@ main:focus {
   display: block;
   margin-bottom: 5px;
   color: var(--sage);
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -478,7 +530,7 @@ main:focus {
   padding: 0;
   list-style: none;
   white-space: nowrap;
-  font-family: var(--serif);
+  font-family: var(--font-display);
   font-style: italic;
   font-size: 17px;
 }
@@ -497,7 +549,7 @@ main:focus {
 
 /* Sur grand écran le dernier mot n'est suivi de rien ; sur petit écran le
    séparateur est conservé pour que la boucle de défilement reste continue. */
-@media (min-width: 941px) {
+@media (min-width: 761px) {
   .ticker-group li:last-child::after {
     content: none;
   }
@@ -533,20 +585,21 @@ main:focus {
 
 .eyebrow {
   margin: 0 0 13px;
-  color: var(--berry);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  color: var(--berry-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
 .section h2 {
   margin: 0;
-  font-family: var(--serif);
-  font-size: clamp(38px, 5.1vw, 62px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   color: var(--deep);
 }
 
@@ -560,7 +613,7 @@ main:focus {
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(14px, 2vw, 22px);
 }
 
@@ -592,9 +645,6 @@ main:focus {
   background: var(--card-juice);
 }
 
-.menu-card.sweet {
-  background: var(--card-sweet);
-}
 
 /* La pastille vit dans le flux, pas en absolu : c'est ce qui garantit
    qu'elle ne recouvre jamais le titre, à aucune largeur. */
@@ -609,7 +659,7 @@ main:focus {
   padding-top: 4px;
   color: #65765f;
   font-size: 11px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: 0.1em;
 }
 
@@ -635,9 +685,10 @@ main:focus {
 
 .menu-card h3 {
   margin: 0 0 9px;
-  font-family: var(--serif);
-  font-size: 31px;
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--deep);
 }
 
@@ -701,11 +752,12 @@ main:focus {
 
 .story-copy h2 {
   margin: 0 0 20px;
-  font-family: var(--serif);
-  font-size: clamp(34px, 3.6vw, 50px);
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   color: var(--deep);
 }
 
@@ -721,12 +773,12 @@ main:focus {
    courant (3,59:1 contre 4,5:1 requis). */
 .story-quote {
   margin: 0 0 32px;
-  font-family: var(--serif);
+  font-family: var(--font-display);
   font-style: italic;
-  font-weight: 600;
-  font-size: clamp(21px, 2vw, 27px);
+  font-weight: 500;
+  font-size: clamp(19px, 1.9vw, 23px);
   line-height: 1.4;
-  color: var(--berry);
+  color: var(--berry-text);
 }
 
 /* 9. Pied de page ------------------------------------------------------- */
@@ -741,7 +793,7 @@ main:focus {
   padding-top: clamp(46px, 5vw, 68px);
   border-top: 1px solid var(--line);
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
+  grid-template-columns: 1.5fr 1.15fr 1fr;
   gap: clamp(28px, 4vw, 56px);
   align-items: start;
 }
@@ -764,10 +816,10 @@ main:focus {
 .footer-quote {
   max-width: 30ch;
   margin: 0;
-  color: var(--berry);
-  font-family: var(--serif);
+  color: var(--berry-text);
+  font-family: var(--font-display);
   font-style: italic;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 19px;
   line-height: 1.5;
 }
@@ -819,9 +871,9 @@ main:focus {
 }
 
 /* 10. Responsive --------------------------------------------------------- */
-/* En dessous de ~940 px les quatre mots ne tiennent plus sur une ligne :
+/* En dessous de ~760 px les trois mots ne tiennent plus sur une ligne :
    le bandeau défile doucement plutôt que d'être rogné. */
-@media (max-width: 940px) {
+@media (max-width: 760px) {
   .ticker-track {
     width: max-content;
     animation: ticker-slide 26s linear infinite;
@@ -954,8 +1006,8 @@ main:focus {
   /* Les trois colonnes de liens restent côte à côte, la marque passe
      au-dessus : en deux colonnes « La carte » se retrouvait orpheline. */
   .footer-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 38px 26px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 38px 30px;
   }
 
   .footer-brand {
@@ -1003,8 +1055,8 @@ main:focus {
 
   .hero h1 {
     margin-bottom: 18px;
-    font-size: clamp(54px, 14.4vw, 76px);
-    line-height: 0.94;
+    font-size: clamp(34px, 9.6vw, 48px);
+    line-height: 1.1;
   }
 
   .intro {
@@ -1016,6 +1068,23 @@ main:focus {
 
   .hero-note {
     margin-top: 27px;
+  }
+
+  .button {
+    gap: 12px;
+    padding: 8px 8px 8px 22px;
+    font-size: 17px;
+  }
+
+  .button__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+
+  .button-ghost {
+    padding: 13px 24px;
+    font-size: 17px;
   }
 
   .hero-visual {
@@ -1085,7 +1154,7 @@ main:focus {
   }
 
   .menu-card h3 {
-    font-size: 28px;
+    font-size: 22px;
   }
 
   .card-media {
@@ -1153,7 +1222,7 @@ main:focus {
 }
 
 /* Sans animation, le bandeau passe à la ligne au lieu de défiler. */
-@media (prefers-reduced-motion: reduce) and (max-width: 940px) {
+@media (prefers-reduced-motion: reduce) and (max-width: 760px) {
   .ticker-track {
     width: auto;
   }
