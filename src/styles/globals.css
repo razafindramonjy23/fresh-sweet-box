@@ -1,0 +1,39 @@
+/* =========================================================================
+   Fresh & Sweet Box — point d'entrée des styles
+
+   Un seul fichier est importé par l'application (`src/app/layout.tsx`) ;
+   il ne contient que des `@import`. L'ordre ci-dessous EST la cascade :
+   déplacer une ligne change le rendu.
+
+   1. base/       variables, reset, règles transverses
+   2. layout/     ossature présente sur toute la page (shell, en-tête, pied)
+   3. components/ éléments réutilisables, indépendants d'une section
+   4. sections/   une feuille par section de la page d'accueil
+   5. base/responsive + base/reduced-motion : toujours en dernier, ils
+      surchargent tout ce qui précède.
+   ========================================================================= */
+
+/* 1. Base ---------------------------------------------------------------- */
+@import "./base/tokens.css";
+@import "./base/reset.css";
+
+/* 2. Ossature ------------------------------------------------------------ */
+@import "./layout/shell.css";
+@import "./layout/section.css";
+@import "./layout/header.css";
+@import "./layout/footer.css";
+
+/* 3. Composants ---------------------------------------------------------- */
+@import "./components/button.css";
+@import "./components/menu-card.css";
+@import "./components/brand-loader.css";
+
+/* 4. Sections ------------------------------------------------------------ */
+@import "./sections/hero.css";
+@import "./sections/ticker.css";
+@import "./sections/menu.css";
+@import "./sections/story.css";
+
+/* 5. Surcharges finales -------------------------------------------------- */
+@import "./base/responsive.css";
+@import "./base/reduced-motion.css";

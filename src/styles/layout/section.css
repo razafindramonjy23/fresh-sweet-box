@@ -1,0 +1,46 @@
+/* Ossature commune à toutes les sections de contenu ---------------------- */
+.section {
+  padding-block: clamp(82px, 9vw, 120px);
+}
+
+/* Deux sections consécutives n'additionnent pas leurs marges : l'espace
+   entre elles reste du même ordre que l'espace intérieur d'une section. */
+.section + .section {
+  padding-top: clamp(24px, 3.5vw, 48px);
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: clamp(28px, 4vw, 42px);
+}
+
+.eyebrow {
+  margin: 0 0 13px;
+  color: var(--berry-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.section h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--deep);
+}
+
+.section-head > p {
+  max-width: 360px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+}

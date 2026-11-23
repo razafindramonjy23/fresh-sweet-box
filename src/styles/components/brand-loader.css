@@ -1,0 +1,135 @@
+/* Écran d'ouverture --------------------------------------------------------
+   Reprise de l'effet « loading lines » : un halo coloré traverse le nom,
+   découpé en fines lamelles verticales par un masque. Trois adaptations :
+   — les couleurs viennent des tokens de la charte, pas du spectre RVB ;
+   — les lettres montent une fois et restent posées, au lieu de clignoter
+     en boucle : c'est ce qui rend le nom lisible en une seconde ;
+   — le balayage fait un passage lent et continu, sans aller-retour sec.
+
+   Deux durées pilotent tout, et `SplashScreen` s'y accorde :
+   --loader-letter-window : étalement des lettres (dernière lettre partie).
+   --loader-sweep         : durée d'un passage du halo.
+   -------------------------------------------------------------------------- */
+.brand-loader {
+  --loader-letter-window: 0.36s;
+  --loader-letter-duration: 0.5s;
+  --loader-sweep: 2.4s;
+  --loader-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding-inline: var(--gutter);
+  background: var(--cream);
+}
+
+.brand-loader__word {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 5.4vw, 46px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: pre;
+  user-select: none;
+}
+
+/* Chaque lettre monte à son tour puis ne bouge plus (`forwards`). Le délai
+   est posé en ligne par le composant, à partir de son rang. */
+.brand-loader__letter {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  opacity: 0;
+  color: var(--deep);
+  will-change: transform, opacity;
+  animation: brand-loader-letter var(--loader-letter-duration)
+    var(--loader-ease) forwards;
+}
+
+/* Les lamelles : 1 px de couleur tous les 8 px. */
+.brand-loader__sweep {
+  position: absolute;
+  inset: -8% -14%;
+  z-index: 1;
+  mask: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 6px,
+    black 7px,
+    black 8px
+  );
+}
+
+/* Le halo coloré qui traverse les lamelles. Un seul passage par cycle, et
+   un masque radial qui évide son centre : le nom reste lisible au passage. */
+.brand-loader__sweep::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 50% 50%, var(--peach) 0%, transparent 50%),
+    radial-gradient(circle at 45% 45%, var(--berry) 0%, transparent 45%),
+    radial-gradient(circle at 55% 55%, var(--leaf) 0%, transparent 45%),
+    radial-gradient(circle at 45% 55%, var(--sage) 0%, transparent 45%),
+    radial-gradient(circle at 55% 45%, var(--deep) 0%, transparent 45%);
+  mask: radial-gradient(
+    circle at 50% 50%,
+    transparent 0%,
+    transparent 10%,
+    black 25%
+  );
+  will-change: transform, opacity;
+  animation: brand-loader-sweep var(--loader-sweep) ease-in-out infinite;
+}
+
+@keyframes brand-loader-letter {
+  from {
+    opacity: 0;
+    transform: translateY(9px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Translation et opacité dans la même règle : le halo apparaît en entrant
+   dans le mot et s'éteint en sortant, jamais en claquant. */
+@keyframes brand-loader-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-58%);
+  }
+  18% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(58%);
+  }
+}
+
+/* Sans animation : le nom s'affiche posé, et l'écran disparaît tout de
+   suite (voir `SplashScreen`). */
+@media (prefers-reduced-motion: reduce) {
+  .brand-loader__letter {
+    opacity: 1;
+    animation: none;
+  }
+
+  .brand-loader__sweep {
+    display: none;
+  }
+}

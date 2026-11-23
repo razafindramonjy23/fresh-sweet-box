@@ -1,0 +1,40 @@
+/* 1. Tokens ------------------------------------------------------------- */
+:root {
+  /* Palette */
+  --cream: #f8f6ec;
+  --paper: #fffefa;
+  --deep: #334b37;
+  --sage: #748c66;
+  --leaf: #dce6d1;
+  --berry: #d94e88;
+  /* Framboise assombrie pour le texte : #d94e88 plafonne à 3,59:1 sur
+     crème, sous le seuil de 4,5:1. Celle-ci tient 5,04:1. Les aplats
+     (boutons, pastilles) gardent --berry. */
+  --berry-text: #bb3669;
+  --peach: #f8d9ca;
+  --ink: #28382b;
+  --muted: #697365;
+  --line: #e5e5d8;
+
+  /* Fonds pastel des cartes */
+  --card-salad: #e5ecd9;
+  --card-juice: #f8e0e9;
+
+  /* Typographie : serif pour les grands titres, sans-serif pour le texte.
+     Aucune police distante n'est chargée — la page s'appuie sur des familles
+     présentes sur le système, Inter en tête si elle est installée. Pour
+     passer à une police hébergée, voir la note « Typographie » du README. */
+  /* Mêmes piles que fresh-sweet-box.zaika.mg : Poppins pour les titres,
+     DM Sans pour le texte. Ni l'une ni l'autre n'est chargée ici
+     (fonts.gstatic.com injoignable depuis cette machine) : le repli
+     système s'applique. Voir la note « Typographie » du README. */
+  --font-display: "Poppins", "Avenir Next", system-ui, sans-serif;
+  --font-sans:
+    "DM Sans", system-ui, -apple-system, "Segoe UI", "Helvetica Neue",
+    sans-serif;
+
+  /* Grille : une seule mesure pour toute la page.
+     Nav, hero, sections et pied de page s'alignent dessus. */
+  --measure: 1200px;
+  --gutter: clamp(20px, 5.4vw, 78px);
+}

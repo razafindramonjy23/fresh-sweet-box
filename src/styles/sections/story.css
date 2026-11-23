@@ -1,0 +1,58 @@
+/* 8. Section « Notre esprit » ------------------------------------------- */
+.story {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  align-items: center;
+  gap: clamp(36px, 5.5vw, 84px);
+}
+
+/* Cadre fixe : c'est l'image qui glisse dedans, pas le cadre. */
+.story-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--leaf);
+  box-shadow: 0 26px 52px rgba(51, 75, 55, 0.16);
+}
+
+/* Plus haute que son cadre : la parallaxe ne découvre jamais de bande vide. */
+.story-photo-shift {
+  position: absolute;
+  inset: -7% 0;
+}
+
+.story-photo-shift img {
+  object-fit: cover;
+}
+
+.story-copy h2 {
+  margin: 0 0 20px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--deep);
+}
+
+.story-body {
+  margin: 0 0 26px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+/* Gras et au moins 18,66 px : la framboise passe alors le seuil de contraste
+   « grand texte » (3:1) sur le fond crème, qu'elle ne tient pas en texte
+   courant (3,59:1 contre 4,5:1 requis). */
+.story-quote {
+  margin: 0 0 32px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(19px, 1.9vw, 23px);
+  line-height: 1.4;
+  color: var(--berry-text);
+}

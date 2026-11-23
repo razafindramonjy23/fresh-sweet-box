@@ -2,27 +2,86 @@
 
 Page d'accueil « marché frais » en **Next.js (App Router) + TypeScript + CSS
 classique**, animée avec **Framer Motion**. Une seule route, rendue en
-statique ; seuls le menu mobile et les animations sont côté client.
+statique ; seuls l'écran d'ouverture, le menu mobile et les animations sont
+côté client.
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
-npm run build    # build de production
-npm start        # sert le build
+npm run dev         # http://localhost:3000
+npm run build       # build de production
+npm start           # sert le build
+npm run type-check  # tsc --noEmit
+npm run lint        # ESLint (next/core-web-vitals + TypeScript + Prettier)
+npm run format      # Prettier
 ```
 
-## Fichiers
+## Arborescence
 
-| Chemin | Rôle |
-|---|---|
-| `app/page.tsx` | Toute la page : contenu, sections, données des cartes. Composant **serveur**. |
-| `app/layout.tsx` | `<html lang="fr">`, métadonnées, Open Graph, `theme-color`, `MotionProvider`. |
-| `app/globals.css` | Tokens puis composants, dans l'ordre des sections. |
-| `components/motion.tsx` | Vocabulaire d'animation (client) : `Reveal`, `Stagger`, `StaggerItem`, `FloatIn`, `Parallax`. |
-| `components/MobileNav.tsx` | Menu mobile (client) : ouverture, `Échap`, `AnimatePresence`. |
-| `public/images/` | Les quatre visuels de la marque. |
-| `AGENTS.md` | Généré et remis à jour automatiquement par `next dev`. À committer tel quel. |
-| `legacy-vite/` | Ancienne version Vite + React, conservée pour référence. Supprimable. |
+Le code applicatif vit sous `src/` ; la racine ne garde que la configuration.
+L'alias `@/*` pointe sur `src/*`.
+
+```
+src/
+├── app/                    routage uniquement (App Router)
+│   ├── layout.tsx          <html>, métadonnées, providers, habillage
+│   └── page.tsx            l'ordre des sections, et rien d'autre
+├── components/
+│   ├── layout/             habillage présent sur toute la page
+│   │   ├── SiteHeader.tsx  en-tête (serveur) + MobileNav
+│   │   ├── SiteFooter.tsx  pied de page, ancre #contact
+│   │   ├── MobileNav.tsx   menu hamburger (client)
+│   │   ├── SplashScreen.tsx écran d'ouverture (client)
+│   │   └── Topline.tsx     bandeau du haut
+│   ├── sections/           une section de la page par fichier
+│   │   ├── HeroSection.tsx
+│   │   ├── TickerSection.tsx
+│   │   ├── MenuSection.tsx
+│   │   ├── StorySection.tsx
+│   │   └── index.ts        barrel, consommé par app/page.tsx
+│   ├── menu/MenuCard.tsx   carte de la grille « Les envies du jour »
+│   ├── motion/             vocabulaire d'animation (client)
+│   │   ├── variants.ts     EASE, DURATION, VIEWPORT, fadeUp
+│   │   ├── tags.ts         table des balises animables
+│   │   ├── Reveal.tsx  Stagger.tsx  StaggerItem.tsx
+│   │   ├── FloatIn.tsx  Parallax.tsx
+│   │   └── index.ts
+│   ├── providers/MotionProvider.tsx   reducedMotion="user"
+│   └── ui/                 briques réutilisables, sans logique métier
+│       ├── ArrowButton.tsx  BrandLogo.tsx
+│       ├── BrandLoader.tsx  ContactIcon.tsx  SkipLink.tsx
+├── content/                tous les textes en liste, un fichier par domaine
+│   ├── site.ts             identité, métadonnées, slogan
+│   ├── navigation.ts       NAV_LINKS, FOOTER_LINKS
+│   ├── menu.ts             MENU_ITEMS, TICKER_WORDS
+│   ├── contact.ts          CONTACT_LINKS
+│   └── index.ts
+├── lib/utils/cn.ts         concaténation de classes CSS
+├── types/                  un fichier par domaine + index.ts
+│   ├── navigation.ts  menu.ts  contact.ts
+└── styles/
+    ├── globals.css         uniquement des @import — l'ordre EST la cascade
+    ├── base/               tokens, reset, responsive, reduced-motion
+    ├── layout/             shell, section, header, footer
+    ├── components/         button, menu-card, brand-loader
+    └── sections/           hero, ticker, menu, story
+```
+
+Quatre règles tenues par cette découpe :
+
+- **`app/` ne contient que du routage.** Aucun composant d'interface n'y est
+  défini ; l'habillage est dans `layout.tsx`, le contenu dans les sections.
+- **Un texte en liste n'est jamais dans un composant.** Tout ce qui s'énumère
+  (navigation, cartes, contacts) vit dans `src/content/` ; seule la prose
+  d'une section reste dans sa section, avec son balisage (`<em>`, `<br />`).
+- **Un type par domaine**, réexporté par `src/types/index.ts` : les composants
+  importent depuis `@/types`, jamais depuis un fichier précis.
+- **`styles/globals.css` ne contient aucune règle.** Déplacer une ligne
+  d'`@import` change le rendu : les surcharges (`base/responsive.css`,
+  `base/reduced-motion.css`) doivent rester en dernier.
+
+Hors `src/` : `public/images/` (les visuels de la marque), `AGENTS.md`
+(généré et remis à jour par `next dev`, à committer tel quel),
+`eslint.config.mjs`, `prettier.config.mjs`, `next.config.ts`, `tsconfig.json`.
 
 ## Images
 
@@ -45,7 +104,7 @@ entrerait en concurrence avec la pastille « faite avec amour ».
 
 **Ajouter une photo aux deux autres cartes** : poser le fichier dans
 `public/images/`, puis remplacer `icon: "🍓"` par `image: "/images/<fichier>"`
-dans `MENU_CARDS` (`app/page.tsx`). Le reste suit tout seul — la pastille
+dans `MENU_ITEMS` (`src/content/menu.ts`). Le reste suit tout seul — la pastille
 accepte les deux. Prévoir un recadrage carré, le masque est rond.
 
 La pastille `.card-media` est **dans le flux**, pas en position absolue :
@@ -54,7 +113,7 @@ la largeur de la carte.
 
 ## Animation
 
-Tout passe par `components/motion.tsx`, qui expose un vocabulaire unique.
+Tout passe par `src/components/motion/`, qui expose un vocabulaire unique.
 Trois règles expliquent la forme du code :
 
 - **La cadence vient du conteneur** (`staggerChildren`), jamais d'un délai
@@ -80,9 +139,37 @@ qui l'emporte sur le CSS : **ne pas donner de survol en `transform` à un
 système le demande. Le `Parallax`, piloté par le défilement, ne passe pas par
 là et se désactive à la main via `useReducedMotion()`.
 
+## Écran d'ouverture
+
+`SplashScreen` (client) couvre la page avec le nom de la marque pendant
+**1 s**, puis s'efface en fondu de 0,65 s. L'animation est entièrement en CSS
+(`src/styles/components/brand-loader.css`) ; `BrandLoader` ne fait que poser
+le délai de chaque lettre, en fraction de `--loader-letter-window`.
+
+| Token | Valeur | Rôle |
+|---|---|---|
+| `--loader-letter-window` | `0.36s` | Étalement des lettres (délai de la dernière) |
+| `--loader-letter-duration` | `0.5s` | Montée d'une lettre |
+| `--loader-sweep` | `2.4s` | Un passage du halo coloré |
+
+Les lettres **montent une fois et restent posées** (`forwards`) : le nom est
+entièrement lisible au bout de ~0,86 s, donc avant le début du fondu. Le halo
+fait un passage lent et continu, dont l'opacité s'allume et s'éteint dans la
+même règle — pas d'aller-retour sec. Les couleurs sont celles de la charte
+(`--peach`, `--berry`, `--leaf`, `--sage`, `--deep`), découpées en lamelles
+verticales de 1 px par un `mask` répété.
+
+Pour changer la durée d'affichage : `VISIBLE_MS` dans `SplashScreen.tsx`.
+Pour supprimer l'écran : retirer `<SplashScreen />` de `src/app/layout.tsx`.
+
+Le contenu de la page est **déjà dans le DOM** sous l'écran : rien n'est
+différé pour les moteurs de recherche. Sous `prefers-reduced-motion`, l'écran
+est retiré immédiatement et les lettres ne clignotent pas.
+
 ## Grille
 
-Une seule mesure gouverne toute la page, définie en haut de `globals.css` :
+Une seule mesure gouverne toute la page, définie dans
+`src/styles/base/tokens.css` :
 
 ```css
 --measure: 1200px;                      /* largeur du contenu */
@@ -134,7 +221,7 @@ display **italique 500**. Pas de serif sur la page.
 ⚠️ **Ni Poppins ni DM Sans ne sont chargées** : `fonts.gstatic.com` est
 injoignable depuis la machine de développement, seul `fonts.googleapis.com`
 répond. Le repli système s'applique donc (SF Pro / Segoe UI). Depuis un réseau
-qui laisse passer Google Fonts, trois lignes suffisent dans `app/layout.tsx` :
+qui laisse passer Google Fonts, trois lignes suffisent dans `src/app/layout.tsx` :
 
 ```tsx
 import { Poppins, DM_Sans } from "next/font/google";
@@ -143,7 +230,8 @@ const sans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
 // puis : <html lang="fr" className={`${display.variable} ${sans.variable}`} data-scroll-behavior="smooth">
 ```
 
-Les deux tokens ci-dessus deviennent alors inutiles dans `globals.css`.
+Les deux tokens ci-dessus deviennent alors inutiles dans
+`src/styles/base/tokens.css`.
 
 ### Deux roses, pas un
 
@@ -179,7 +267,8 @@ blocs au-dessus de la ligne de flottaison (`<Stagger now>` du hero).
 ## Contenu : réel ou déclaré manquant
 
 Les coordonnées affichées dans le pied de page sont **réelles**, reprises de
-l'ancienne version (`legacy-vite/src/App.jsx`) :
+l'ancienne version Vite (supprimée lors de la restructuration ; elle reste
+dans l'historique git, commit `b185401`) :
 
 - Téléphone **032 63 796 87**, en lien `tel:` au format local — aucun indicatif
   pays n'a été ajouté, il n'était pas fourni.
@@ -188,12 +277,12 @@ l'ancienne version (`legacy-vite/src/App.jsx`) :
   vers un compte externe.
 - Facebook : lien **fourni directement par le client**, donc fiable,
   contrairement au pseudo Instagram.
-- Slogan « Eat more color, more Freshness and Sweetness ».
+- Slogan « Eat Healthy, Eat more Freshness and Sweetness ».
 
 Ce qui n'est pas connu est affiché **en italique et nommé comme manquant**,
-jamais inventé : il ne reste que l'e-mail. Rien à chercher
-dans le code : ces quatre entrées sont dans `OU_NOUS_TROUVER` et `COMMANDER`
-en tête de `app/page.tsx`.
+jamais inventé (champ `pending`) : il ne reste que l'e-mail. Rien à chercher
+dans le code : ces quatre entrées sont dans `CONTACT_LINKS`
+(`src/content/contact.ts`).
 
 Il n'y a pas de section de contact dédiée : le bloc vert « Une envie de
 frais ? » a été retiré. L'ancre `#contact` vit sur le `<footer>`, sinon les

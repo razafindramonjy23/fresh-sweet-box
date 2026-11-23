@@ -1,0 +1,88 @@
+/* 9. Pied de page ------------------------------------------------------- */
+/* Le filet est porté par la grille, pas par `.footer` : sur un `.shell` il
+   s'étendrait jusqu'aux gouttières et ne serait plus aligné avec celui du
+   bas, qui lui vit dans la boîte de contenu. */
+.footer {
+  color: var(--muted);
+}
+
+.footer-grid {
+  padding-top: clamp(46px, 5vw, 68px);
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1.5fr 1.15fr 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+
+.footer-logo {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.footer-tagline {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* 19 px en gras : au-delà de 18,66 px la framboise relève du seuil
+   « grand texte » (3:1), qu'elle tient — contrairement au seuil du texte
+   courant (4,5:1). */
+.footer-quote {
+  max-width: 30ch;
+  margin: 0;
+  color: var(--berry-text);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+.footer .eyebrow {
+  margin-bottom: 18px;
+}
+
+.footer-list {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.footer-icon {
+  flex: none;
+  color: var(--berry);
+}
+
+.footer-list a {
+  color: var(--ink);
+  transition: color 0.2s;
+}
+
+.footer-list a:hover {
+  color: var(--berry);
+}
+
+/* Information non fournie : affichée en italique, jamais inventée. */
+.footer-todo {
+  font-style: italic;
+}
+
+.footer-legal {
+  margin: clamp(38px, 4.5vw, 58px) 0 0;
+  padding-block: 22px 34px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+}

@@ -1,0 +1,37 @@
+/* 11. Préférences de mouvement ------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Sans animation, le bandeau passe à la ligne au lieu de défiler. */
+@media (prefers-reduced-motion: reduce) and (max-width: 760px) {
+  .ticker-track {
+    width: auto;
+  }
+
+  .ticker-group {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    row-gap: 6px;
+    white-space: normal;
+  }
+
+  .ticker-group + .ticker-group {
+    display: none;
+  }
+
+  .ticker-group li:last-child::after {
+    content: none;
+  }
+}
