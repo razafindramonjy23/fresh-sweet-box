@@ -6,6 +6,35 @@
   color: var(--muted);
 }
 
+/* 9b. Ruban de créatures (FooterCritters / fuzzy-critter-footer) --------
+   Intégré DANS le pied de page, juste sous la ligne « © … » : un bandeau
+   fin où les petits fruits tombent et rebondissent. Pas de mot géant, pas
+   de filet — on garde seulement la scène animée, à hauteur fixe. */
+.fsb-critter-band {
+  width: 100%;
+}
+
+.fsb-critters {
+  /* Variables de marque attendues par le composant. */
+  --color-background: transparent;
+  --color-foreground: var(--ink);
+  --color-muted-foreground: var(--muted);
+  --color-border: var(--line);
+  --color-primary: var(--berry);
+  /* Ruban fin : la hauteur fixe borne la scène (le composant la lit sur
+     ce conteneur), les fruits restent petits et entièrement visibles. */
+  height: clamp(116px, 13vw, 168px);
+  padding: 0;
+  border-top: 0;
+  background: transparent;
+}
+
+/* On masque le mot géant et la brume : ici on ne veut que les créatures. */
+.fsb-critters .fcf-word,
+.fsb-critters .fcf-haze {
+  display: none;
+}
+
 .footer-grid {
   padding-top: clamp(46px, 5vw, 68px);
   border-top: 1px solid var(--line);

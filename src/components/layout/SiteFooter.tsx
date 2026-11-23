@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion";
 import { ContactIcon } from "@/components/ui/ContactIcon";
+import { FooterCritters } from "./FooterCritters";
 import { FooterHours } from "./FooterHours";
 import { CONTACT_LINKS, FOOTER_LINKS, SITE } from "@/content";
 
@@ -70,6 +71,7 @@ export function SiteFooter() {
       <p className="footer-legal">
         © {SITE.copyrightYear} {SITE.name}
       </p>
+      <FooterCritters />
     </Reveal>
   );
 }
