@@ -1,0 +1,17 @@
+/* Voile de découverte ------------------------------------------------------
+   Un élément plein qui se retire par translation. Il est de la couleur du
+   fond : on ne le voit donc pas partir, on voit l'image arriver.
+   -------------------------------------------------------------------------- */
+.mask-reveal {
+  position: relative;
+  overflow: hidden;
+}
+
+.mask-reveal__curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--cream);
+  pointer-events: none;
+  will-change: transform;
+}

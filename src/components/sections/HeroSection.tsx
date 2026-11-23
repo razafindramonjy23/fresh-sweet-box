@@ -22,7 +22,7 @@ export function HeroSection() {
           <em>pleine de vie.</em>
         </StaggerItem>
         <StaggerItem as="p" className="intro">
-          Des salades de legumes, des fruits colorés, et des douceurs à
+          Des salades de légumes, des fruits colorés, et des douceurs à
           savourer. Le meilleur du frais, préparé avec soin et prêt à vous
           suivre.
         </StaggerItem>

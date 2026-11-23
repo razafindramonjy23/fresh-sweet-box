@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { m, useMotionValueEvent, useScroll } from "framer-motion";
 import { useRef, useState, type ReactNode } from "react";
 import { EASE } from "@/components/motion";
 
@@ -39,7 +39,7 @@ export function HeaderShell({ children }: { children: ReactNode }) {
   });
 
   return (
-    <motion.header
+    <m.header
       className="nav-bar"
       data-scrolled={scrolled || undefined}
       initial={{ opacity: 0 }}
@@ -47,6 +47,6 @@ export function HeaderShell({ children }: { children: ReactNode }) {
       transition={{ duration: 0.45, ease: EASE }}
     >
       <div className="shell nav">{children}</div>
-    </motion.header>
+    </m.header>
   );
 }

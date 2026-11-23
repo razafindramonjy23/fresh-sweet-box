@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { EASE } from "@/components/motion";
 import { BrandLoader } from "@/components/ui/BrandLoader";
@@ -53,7 +53,7 @@ export function SplashScreen() {
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div
+        <m.div
           className="brand-loader"
           aria-hidden="true"
           initial={{ opacity: 1 }}
@@ -61,7 +61,7 @@ export function SplashScreen() {
           transition={{ duration: FADE_OUT, ease: EASE }}
         >
           <BrandLoader />
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

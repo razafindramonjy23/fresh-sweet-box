@@ -2,7 +2,7 @@
 
 import {
   AnimatePresence,
-  motion,
+  m,
   useMotionValueEvent,
   useScroll,
 } from "framer-motion";
@@ -32,7 +32,7 @@ export function ActionBar() {
   return (
     <AnimatePresence>
       {shown && (
-        <motion.nav
+        <m.nav
           className="action-bar"
           aria-label="Nous contacter"
           initial={{ y: "100%" }}
@@ -53,7 +53,7 @@ export function ActionBar() {
               {action.label}
             </a>
           ))}
-        </motion.nav>
+        </m.nav>
       )}
     </AnimatePresence>
   );

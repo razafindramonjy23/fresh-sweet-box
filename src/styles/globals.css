@@ -30,6 +30,7 @@
 @import "./components/action-bar.css";
 @import "./components/scroll-progress.css";
 @import "./components/word-reveal.css";
+@import "./components/mask-reveal.css";
 
 /* 4. Sections ------------------------------------------------------------ */
 @import "./sections/hero.css";

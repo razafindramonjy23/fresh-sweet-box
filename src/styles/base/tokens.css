@@ -20,17 +20,17 @@
   --card-salad: #e5ecd9;
   --card-juice: #f8e0e9;
 
-  /* Typographie : serif pour les grands titres, sans-serif pour le texte.
-     Aucune police distante n'est chargée — la page s'appuie sur des familles
-     présentes sur le système, Inter en tête si elle est installée. Pour
-     passer à une police hébergée, voir la note « Typographie » du README. */
-  /* Mêmes piles que fresh-sweet-box.zaika.mg : Poppins pour les titres,
-     DM Sans pour le texte. Ni l'une ni l'autre n'est chargée ici
-     (fonts.gstatic.com injoignable depuis cette machine) : le repli
-     système s'applique. Voir la note « Typographie » du README. */
-  --font-display: "Poppins", "Avenir Next", system-ui, sans-serif;
+  /* Typographie : Poppins pour les titres, DM Sans pour le texte — les
+     mêmes piles que fresh-sweet-box.zaika.mg.
+
+     Les deux polices sont désormais **réellement chargées** : `next/font`
+     les télécharge au build et les sert depuis notre domaine (voir
+     `src/app/layout.tsx`), en définissant `--font-poppins` et
+     `--font-dm-sans` sur <html>. Les piles ci-dessous ne font que les
+     reprendre, avec un repli système si la variable venait à manquer. */
+  --font-display: var(--font-poppins, "Avenir Next"), system-ui, sans-serif;
   --font-sans:
-    "DM Sans", system-ui, -apple-system, "Segoe UI", "Helvetica Neue",
+    var(--font-dm-sans, system-ui), -apple-system, "Segoe UI", "Helvetica Neue",
     sans-serif;
 
   /* Grille : une seule mesure pour toute la page.

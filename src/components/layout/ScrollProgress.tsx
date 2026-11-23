@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { m, useReducedMotion, useScroll, useSpring } from "framer-motion";
 
 /**
  * Fil d'avancement en haut de l'écran.
@@ -20,7 +20,7 @@ export function ScrollProgress() {
   });
 
   return (
-    <motion.div
+    <m.div
       className="scroll-progress"
       aria-hidden="true"
       style={{ scaleX: reduce ? scrollYProgress : smooth }}

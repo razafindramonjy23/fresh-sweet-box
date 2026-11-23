@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { motion, type Variants } from "framer-motion";
+import { m, type Variants } from "framer-motion";
 import { EASE, VIEWPORT } from "./variants";
 
 type Props = {
@@ -46,7 +46,7 @@ export function WordReveal({
   };
 
   return (
-    <motion.span
+    <m.span
       className={className ? `word-reveal ${className}` : "word-reveal"}
       variants={container}
       initial="hidden"
@@ -57,13 +57,13 @@ export function WordReveal({
       {words.map((value, index) => (
         <Fragment key={`${value}-${index}`}>
           <span className="word-reveal__mask">
-            <motion.span className="word-reveal__word" variants={word}>
+            <m.span className="word-reveal__word" variants={word}>
               {value}
-            </motion.span>
+            </m.span>
           </span>
           {index < words.length - 1 ? " " : null}
         </Fragment>
       ))}
-    </motion.span>
+    </m.span>
   );
 }

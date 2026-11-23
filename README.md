@@ -339,7 +339,7 @@ Deux pièges rencontrés, tous deux liés aux éléments de grille :
 
 | Seuil | Ce qui change |
 |---|---|
-| `940px` | Le bandeau de mots-clés passe du mode réparti au mode défilant : en dessous, les quatre mots ne tiennent pas sur une ligne sans être rognés. |
+| `940px` | Le bandeau de mots-clés passe du mode réparti au mode défilant : en dessous, les quatre mots ne tiennent pas sur une ligne sans être rognés. Le séparateur ayant été retiré, c'est un `padding-inline-end` posé sur **tous** les éléments, dernier compris, qui porte l'espacement — c'est lui qui garde la boucle périodique. |
 | `850px` | Les colonnes s'empilent. Les liens deviennent un menu hamburger. Le visuel du hero prend une largeur propre pour que les éléments flottants restent collés au cadre. |
 | `600px` | Marges à 20 px, tailles réduites, polaroid et bouton de nav masqués. |
 
@@ -354,30 +354,33 @@ jusqu'à la racine.
 ## Typographie
 
 Les piles sont **celles du site en ligne** (`fresh-sweet-box.zaika.mg`) :
+Poppins pour les titres, DM Sans pour le texte.
 
-```css
---font-display: "Poppins", "Avenir Next", system-ui, sans-serif;   /* titres */
---font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", …;   /* texte */
-```
+Les deux sont **chargées par `next/font/google`** depuis
+`src/app/layout.tsx` : Next les télécharge **au moment du build** et les sert
+depuis notre propre domaine. Aucune requête vers Google chez le visiteur —
+donc rien à déclarer côté vie privée, et un aller-retour réseau en moins.
+`adjustFontFallback` calibre la police de repli sur les métriques de la
+vraie, ce qui évite le saut de texte au remplacement.
+
+Seules les variantes réellement utilisées sont demandées, relevées dans le
+CSS :
+
+| Police | Variantes | Pourquoi |
+|---|---|---|
+| Poppins | 600 normal | titres `h1`/`h2`/`h3`, logo, écran d'ouverture |
+| Poppins | 400 normal | pastille « faite avec amour » du hero |
+| Poppins | 400 + 500 italique | bandeau de mots-clés, citations |
+| DM Sans | variable, normal | tout le texte courant (une seule police couvre 400 à 700) |
+
+**Pas d'italique pour DM Sans** : son fichier variable pèse 36 Ko et ne
+servirait qu'aux mentions « à compléter », qui ont vocation à disparaître.
+Le navigateur en synthétise une oblique, suffisante pour un texte d'attente.
+Total préchargé : **84 Ko**, contre 123 Ko si l'on prenait tout.
 
 Réglages des titres repris tels quels du site : **graisse 600**, approche
 `-0.02em`, interlignage `1.14`, `text-wrap: balance`. Les citations sont en
 display **italique 500**. Pas de serif sur la page.
-
-⚠️ **Ni Poppins ni DM Sans ne sont chargées** : `fonts.gstatic.com` est
-injoignable depuis la machine de développement, seul `fonts.googleapis.com`
-répond. Le repli système s'applique donc (SF Pro / Segoe UI). Depuis un réseau
-qui laisse passer Google Fonts, trois lignes suffisent dans `src/app/layout.tsx` :
-
-```tsx
-import { Poppins, DM_Sans } from "next/font/google";
-const display = Poppins({ subsets: ["latin"], weight: ["500","600","700"], style: ["normal","italic"], variable: "--font-display" });
-const sans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
-// puis : <html lang="fr" className={`${display.variable} ${sans.variable}`} data-scroll-behavior="smooth">
-```
-
-Les deux tokens ci-dessus deviennent alors inutiles dans
-`src/styles/base/tokens.css`.
 
 ### Deux roses, pas un
 
@@ -396,6 +399,32 @@ Le blanc sur `--berry` des boutons tient parce que le texte y est à **19 px /
 700**, donc « grand texte » (seuil 3:1). Le bouton de la barre de navigation,
 à 14 px, reste en dessous.
 
+## Poids de la page
+
+Mesuré sur le build de production, en transfert réel (gzip) :
+
+| | gzip |
+|---|---|
+| JavaScript | 219 Ko |
+| Polices | 84 Ko |
+| HTML | 8 Ko |
+| CSS | 4 Ko |
+
+Répartition du JavaScript : **168 Ko sont React et le socle Next**
+(react-dom, routeur, ordonnanceur) — le plancher d'une application App
+Router. Framer Motion **et** tout le code de la page ne pèsent ensemble que
+47 Ko.
+
+`LazyMotion` (dans `MotionProvider`) ne charge que le jeu `domAnimation` au
+lieu du moteur complet : 234 → 219 Ko, sans rien changer à l'écran. C'est
+pour cette raison que les composants s'écrivent `m.div` et non `motion.div`,
+et que `strict` est activé — un oubli rechargerait le moteur entier en
+silence.
+
+Aller plus bas supposerait de retirer Framer Motion et de réécrire les
+animations en CSS (défilement natif + `IntersectionObserver`), pour environ
+35 à 40 Ko de moins. Le plancher Next, lui, ne bouge pas.
+
 ## Accessibilité
 
 - Menu mobile : `aria-expanded`, `aria-controls`, fermeture à `Échap` et au
@@ -410,9 +439,14 @@ Le blanc sur `--berry` des boutons tient parce que le texte y est à **19 px /
 (j, p, g) : une réserve de `0.22em` en bas, reprise par une marge négative,
 les laisse passer sans changer l'interligne.
 
-`MaskReveal` anime un `clip-path`, qui n'est **pas** une transformation :
-`MotionConfig reducedMotion` ne le neutralise pas, la préférence système y est
-donc lue à la main, comme dans `Parallax`.
+`MaskReveal` fait glisser un **voile** — un élément réel animé en
+`transform` — et non un `clip-path` : **Framer Motion n'anime pas
+`clip-path: inset(...)`**, il laisse la valeur initiale en place et l'image
+ne réapparaît jamais. Vérifié dans le navigateur, pas supposé.
+
+Conséquence à ne pas perdre de vue : sous `prefers-reduced-motion`, le voile
+**n'est pas rendu du tout**. S'il l'était, Framer neutraliserait sa
+translation et il resterait en place, masquant l'image pour de bon.
 
 Les animations d'entrée posent l'opacité à 0 dans le HTML rendu côté serveur :
 le contenu n'apparaît qu'une fois la page hydratée. C'est le compromis

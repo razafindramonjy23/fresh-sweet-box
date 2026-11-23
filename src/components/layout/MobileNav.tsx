@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { AnimatePresence, m, type Variants } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 
 type Props = {
@@ -48,18 +48,18 @@ export function MobileNav({ children, cta }: Props) {
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
         onClick={() => setOpen((value) => !value)}
       >
-        <motion.span
+        <m.span
           aria-hidden="true"
           animate={{ rotate: open ? 90 : 0 }}
           transition={{ duration: 0.25 }}
         >
           {open ? "×" : "☰"}
-        </motion.span>
+        </m.span>
       </button>
 
       <AnimatePresence>
         {open && (
-          <motion.nav
+          <m.nav
             id="menu-mobile"
             className="menu-panel"
             aria-label="Navigation"
@@ -70,7 +70,7 @@ export function MobileNav({ children, cta }: Props) {
             onClick={() => setOpen(false)}
           >
             {children}
-          </motion.nav>
+          </m.nav>
         )}
       </AnimatePresence>
     </>
