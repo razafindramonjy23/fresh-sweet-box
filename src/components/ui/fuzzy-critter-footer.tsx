@@ -53,6 +53,9 @@ export type FuzzyCritterFooterProps = {
   wind?: number;
   /** Fur strands per creature, as a multiple of 10 000 */
   density?: number;
+  /** Upper bound for the renderer device-pixel-ratio (default 2). Lower it
+   *  (e.g. 1.5) on phones to spare the GPU without touching fur density. */
+  maxPixelRatio?: number;
   /** Little synthesised blips on grab, click and landing */
   sound?: boolean;
   volume?: number;
@@ -648,6 +651,7 @@ export default function FuzzyCritterFooter({
   bounce = 0.32,
   wind = 1,
   density = 1,
+  maxPixelRatio = 2,
   sound = true,
   volume = 0.4,
   curve = true,
@@ -684,7 +688,9 @@ export default function FuzzyCritterFooter({
     } catch {
       return; // no WebGL: the footer still works, just without its residents
     }
-    gl.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    gl.setPixelRatio(
+      Math.min(Math.max(1, maxPixelRatio), window.devicePixelRatio || 1),
+    );
     gl.setClearColor(0x000000, 0);
     gl.domElement.className = "fcf-canvas";
     stage.appendChild(gl.domElement);
@@ -1271,7 +1277,16 @@ export default function FuzzyCritterFooter({
       if (audio) void audio.close();
       setReady(false);
     };
-  }, [critters, gravity, bounce, wind, density, idleHops, curve]);
+  }, [
+    critters,
+    gravity,
+    bounce,
+    wind,
+    density,
+    idleHops,
+    curve,
+    maxPixelRatio,
+  ]);
 
   // ---- the wordmark fills the footer width ----
   React.useEffect(() => {

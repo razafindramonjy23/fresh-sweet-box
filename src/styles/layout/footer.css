@@ -27,6 +27,10 @@
   padding: 0;
   border-top: 0;
   background: transparent;
+  /* Mobile : le défilement vertical de la page l'emporte toujours ; un tap
+     fait quand même sauter un fruit. On n'emprisonne donc jamais le scroll
+     sous le doigt dans ce bandeau de bas de page. */
+  touch-action: pan-y;
 }
 
 /* On masque le mot géant et la brume : ici on ne veut que les créatures. */
