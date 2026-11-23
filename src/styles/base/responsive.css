@@ -16,6 +16,14 @@
   .ticker-group + .ticker-group {
     display: flex;
   }
+
+  /* Sur grand écran, `space-around` écarte les mots ; ici la bande est en
+     `max-content`, c'est donc ce retrait qui porte tout l'espacement. Il est
+     posé sur TOUS les éléments, le dernier compris : la bande reste ainsi
+     parfaitement périodique et la boucle de défilement ne saute pas. */
+  .ticker-group li {
+    padding-inline-end: 64px;
+  }
 }
 
 @media (max-width: 850px) {

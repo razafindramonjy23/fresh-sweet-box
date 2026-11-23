@@ -28,21 +28,6 @@
   display: none;
 }
 
-.ticker-group li::after {
-  content: "✳";
-  padding-inline: 28px;
-  color: var(--berry);
-  font-style: normal;
-}
-
-/* Sur grand écran le dernier mot n'est suivi de rien ; sur petit écran le
-   séparateur est conservé pour que la boucle de défilement reste continue. */
-@media (min-width: 761px) {
-  .ticker-group li:last-child::after {
-    content: none;
-  }
-}
-
 @keyframes ticker-slide {
   from {
     transform: translateX(0);

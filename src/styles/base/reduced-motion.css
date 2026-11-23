@@ -23,7 +23,7 @@
     flex-wrap: wrap;
     justify-content: center;
     width: auto;
-    row-gap: 6px;
+    gap: 6px 30px;
     white-space: normal;
   }
 
@@ -31,7 +31,9 @@
     display: none;
   }
 
-  .ticker-group li:last-child::after {
-    content: none;
+  /* Sans défilement, plus besoin de périodicité : l'espacement revient au
+     `gap` ci-dessus et le retrait de fin déséquilibrerait le centrage. */
+  .ticker-group li {
+    padding-inline-end: 0;
   }
 }
