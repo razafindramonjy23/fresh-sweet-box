@@ -1,5 +1,12 @@
 import Image from "next/image";
-import { Parallax, Reveal, Stagger, StaggerItem } from "@/components/motion";
+import {
+  MaskReveal,
+  Parallax,
+  Reveal,
+  Stagger,
+  StaggerItem,
+  WordReveal,
+} from "@/components/motion";
 import { ArrowButton } from "@/components/ui/ArrowButton";
 import { SITE } from "@/content";
 
@@ -8,7 +15,7 @@ export function StorySection() {
   return (
     <section className="shell section" id="esprit">
       <Reveal className="story">
-        <div className="story-photo">
+        <MaskReveal className="story-photo">
           <Parallax className="story-photo-shift" distance={22}>
             <Image
               src="/images/bol-salade-fruits-detail.jpg"
@@ -17,14 +24,14 @@ export function StorySection() {
               sizes="(max-width: 850px) 92vw, 45vw"
             />
           </Parallax>
-        </div>
+        </MaskReveal>
 
         <Stagger className="story-copy">
           <StaggerItem as="p" className="eyebrow">
             Notre esprit
           </StaggerItem>
           <StaggerItem as="h2">
-            Le frais d’un bar à salade, le plaisir d’un bar à desserts
+            <WordReveal text="Le frais d’un bar à salade, le plaisir d’un bar à desserts" />
           </StaggerItem>
           <StaggerItem as="p" className="story-body">
             Tout part de fruits et légumes coupés le jour même. On compose

@@ -1,18 +1,19 @@
-import { Reveal } from "@/components/motion";
 import { ArrowButton } from "@/components/ui/ArrowButton";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { NAV_LINKS } from "@/content";
+import { HeaderShell } from "./HeaderShell";
 import { MobileNav } from "./MobileNav";
 
 /**
  * En-tête de la page.
  *
  * Les liens sont rendus ici, côté serveur, puis passés en `children` à
- * <MobileNav> : le seul îlot client de l'en-tête ne reconstruit aucun contenu.
+ * <MobileNav> : les îlots clients de l'en-tête ne reconstruisent aucun
+ * contenu. <HeaderShell> porte le comportement collant.
  */
 export function SiteHeader() {
   return (
-    <Reveal as="header" className="shell nav" now>
+    <HeaderShell>
       <a className="logo" href="#accueil">
         <BrandLogo size={44} priority />
       </a>
@@ -30,6 +31,6 @@ export function SiteHeader() {
           </a>
         ))}
       </MobileNav>
-    </Reveal>
+    </HeaderShell>
   );
 }

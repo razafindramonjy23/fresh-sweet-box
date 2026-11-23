@@ -24,11 +24,19 @@ L'alias `@/*` pointe sur `src/*`.
 src/
 ├── app/                    routage uniquement (App Router)
 │   ├── layout.tsx          <html>, métadonnées, providers, habillage
-│   └── page.tsx            l'ordre des sections, et rien d'autre
+│   ├── page.tsx            l'ordre des sections, et rien d'autre
+│   ├── opengraph-image.jpg image de partage 1200×630 (+ .alt.txt)
+│   ├── icon.svg            favicon (dérivé du logo SVG)
+│   ├── apple-icon.png      icône iOS 180×180, opaque
+│   ├── robots.ts  sitemap.ts
 ├── components/
 │   ├── layout/             habillage présent sur toute la page
 │   │   ├── SiteHeader.tsx  en-tête (serveur) + MobileNav
 │   │   ├── SiteFooter.tsx  pied de page, ancre #contact
+│   │   ├── FooterHours.tsx horaires, dérivés de content/hours.ts
+│   │   ├── HeaderShell.tsx en-tête collant, s'efface à la descente (client)
+│   │   ├── ScrollProgress.tsx fil d'avancement (client)
+│   │   ├── ActionBar.tsx   barre d'action fixe mobile (client)
 │   │   ├── MobileNav.tsx   menu hamburger (client)
 │   │   ├── SplashScreen.tsx écran d'ouverture (client)
 │   │   └── Topline.tsx     bandeau du haut
@@ -44,8 +52,11 @@ src/
 │   │   ├── tags.ts         table des balises animables
 │   │   ├── Reveal.tsx  Stagger.tsx  StaggerItem.tsx
 │   │   ├── FloatIn.tsx  Parallax.tsx
+│   │   ├── WordReveal.tsx  montée des mots d'un titre
+│   │   ├── MaskReveal.tsx  voile qui glisse sur une image
 │   │   └── index.ts
 │   ├── providers/MotionProvider.tsx   reducedMotion="user"
+│   ├── seo/StructuredData.tsx         JSON-LD FoodEstablishment
 │   └── ui/                 briques réutilisables, sans logique métier
 │       ├── ArrowButton.tsx  BrandLogo.tsx
 │       ├── BrandLoader.tsx  ContactIcon.tsx  SkipLink.tsx
@@ -53,16 +64,24 @@ src/
 │   ├── site.ts             identité, métadonnées, slogan
 │   ├── navigation.ts       NAV_LINKS, FOOTER_LINKS
 │   ├── menu.ts             MENU_ITEMS, TICKER_WORDS
-│   ├── contact.ts          CONTACT_LINKS
+│   ├── contact.ts          PHONE, INSTAGRAM, FACEBOOK, CONTACT_LINKS
+│   ├── hours.ts            OPENING_HOURS — à compléter
+│   ├── actions.ts          QUICK_ACTIONS (barre mobile)
 │   └── index.ts
-├── lib/utils/cn.ts         concaténation de classes CSS
+├── lib/
+│   ├── config.ts           siteUrl (NEXT_PUBLIC_SITE_URL)
+│   ├── hours.ts            mise en forme + conversion schema.org
+│   ├── splash.ts           clé de session + script anti-clignotement
+│   ├── seo/structured-data.ts
+│   └── utils/cn.ts
 ├── types/                  un fichier par domaine + index.ts
-│   ├── navigation.ts  menu.ts  contact.ts
+│   ├── navigation.ts  menu.ts  contact.ts  hours.ts  actions.ts
 └── styles/
     ├── globals.css         uniquement des @import — l'ordre EST la cascade
     ├── base/               tokens, reset, responsive, reduced-motion
     ├── layout/             shell, section, header, footer
-    ├── components/         button, menu-card, brand-loader
+    ├── components/         button, menu-card, brand-loader, action-bar,
+    │                       scroll-progress, word-reveal
     └── sections/           hero, ticker, menu, story
 ```
 
@@ -126,6 +145,39 @@ Trois règles expliquent la forme du code :
   garde sa rotation en CSS. Même découpage pour la pastille, le polaroid et
   la photo de « Notre esprit ».
 
+### Le répertoire
+
+| Effet | Où | Déclencheur |
+|---|---|---|
+| `Reveal` | blocs isolés, pied de page | entrée dans le champ |
+| `Stagger` / `StaggerItem` | hero, en-têtes de section, cartes, colonnes du pied de page | cadence du conteneur |
+| `FloatIn` | photos du hero, pastilles de fruits | entrée puis lévitation continue |
+| `Parallax` | photo de « Notre esprit » | défilement |
+| `WordReveal` | les deux `<h2>` | entrée dans le champ |
+| `MaskReveal` | photo de « Notre esprit » | entrée dans le champ |
+| `HeaderShell` | en-tête | sens du défilement |
+| `ScrollProgress` | fil en haut de l'écran | progression dans la page |
+| Zoom au survol (CSS) | pastilles des cartes, photo de « Notre esprit » | pointeur |
+
+Deux choix de retenue, volontaires :
+
+- **Le `<h1>` du hero n'a pas de montée de mots.** C'est le message principal,
+  au-dessus de la ligne de flottaison : il doit arriver d'un bloc. L'effet est
+  réservé aux titres que l'on découvre en défilant, où l'attente fait partie
+  de l'effet.
+- **Aucun effet suivant le pointeur** (inclinaison 3D, halo de curseur) : sans
+  équivalent au toucher, il n'existerait que pour une partie des visiteurs, et
+  il entrerait en concurrence avec les `transform` déjà posés sur le hero.
+
+L'en-tête collant n'est pas un ornement : c'est le seul endroit, sur grand
+écran, où l'appel à l'action reste atteignable sans remonter — l'équivalent de
+la barre d'action mobile. Il ne s'efface qu'au-delà de 180 px de défilement, et
+ignore les variations de moins de 6 px pour ne pas clignoter.
+
+`position: sticky` fonctionne ici **parce que** `html` et `body` portent
+`overflow-x: clip` et non `hidden` : `clip` ne crée pas de conteneur de
+défilement. Remplacer l'un par l'autre casserait l'en-tête collant.
+
 Les composants animent **l'élément lui-même** (`as="p"`, `as="article"`…)
 plutôt que d'ajouter une enveloppe, pour ne pas casser les sélecteurs enfants
 du CSS (`.section-head > p`, `.story-copy > p:not(.eyebrow)`).
@@ -159,12 +211,106 @@ même règle — pas d'aller-retour sec. Les couleurs sont celles de la charte
 (`--peach`, `--berry`, `--leaf`, `--sage`, `--deep`), découpées en lamelles
 verticales de 1 px par un `mask` répété.
 
+L'écran ne s'affiche **qu'une fois par session** : un script d'amorçage
+(`src/lib/splash.ts`, posé par le layout) lit `sessionStorage` et place
+`data-splash-seen` sur `<html>` **avant la première peinture**, ce que le CSS
+utilise pour masquer l'écran d'emblée. Au retour sur la page, rien ne
+clignote et rien n'est retardé.
+
+⚠️ Poser cet attribut avant l'hydratation fait **volontairement** diverger le
+client du HTML rendu par le serveur. D'où `suppressHydrationWarning` sur
+`<html>` : c'est le mécanisme prévu par React pour ce cas, et il ne couvre
+que les attributs de cet élément précis — un vrai écart dans le contenu
+resterait signalé. Sans lui, la console affiche une erreur d'hydratation à
+chaque rechargement. Même raison, même remède, que les scripts de thème
+sombre.
+
 Pour changer la durée d'affichage : `VISIBLE_MS` dans `SplashScreen.tsx`.
 Pour supprimer l'écran : retirer `<SplashScreen />` de `src/app/layout.tsx`.
 
 Le contenu de la page est **déjà dans le DOM** sous l'écran : rien n'est
 différé pour les moteurs de recherche. Sous `prefers-reduced-motion`, l'écran
 est retiré immédiatement et les lettres ne clignotent pas.
+
+## Conversion : horaires, barre d'action, partage
+
+**Les horaires** se décrivent dans `src/content/hours.ts`, et **uniquement
+là** :
+
+```ts
+export const OPENING_HOURS: OpeningRange[] = [
+  { days: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+    opens: "08:00", closes: "18:00" },
+  { days: ["saturday"], opens: "09:00", closes: "17:00" },
+];
+```
+
+De cette seule liste découlent l'étiquette des jours (« Lundi – Vendredi »,
+abrégée dès trois jours consécutifs), l'horaire affiché, la ligne
+« Fermé : Dimanche » pour les jours non couverts, et le balisage
+`openingHoursSpecification` que Google lit. Tant que la liste est **vide**,
+le pied de page affiche « Horaires à compléter » en italique et le balisage
+n'annonce aucun horaire : rien n'est inventé.
+
+**La barre d'action** (`ActionBar`) est fixée en bas de l'écran sur mobile,
+masquée au-delà de 850 px, et n'apparaît qu'après 420 px de défilement —
+tant que les boutons du hero sont visibles, elle ferait doublon. Son contenu
+vient de `QUICK_ACTIONS` (`src/content/actions.ts`) : **Appeler** et
+**Instagram**. Pour ajouter WhatsApp, une ligne suffit, le gabarit est en
+commentaire dans le fichier.
+
+**L'image de partage** est `src/app/opengraph-image.jpg` (1200 × 630), prise
+automatiquement par Next pour `og:image` et `twitter:image`. Elle a été
+composée avec `sharp` : panneau crème avec le badge — qui porte déjà le nom
+et la baseline, donc **aucun texte n'y est rendu avec une police** — et la
+photo du hero à droite. Pour la régénérer après un changement de visuel, il
+faut recomposer les deux calques ; le texte alternatif vit dans
+`opengraph-image.alt.txt`.
+
+**Les icônes.** `src/app/icon.svg` est dérivé de
+`public/images/fresh_sweet_box_logo.svg` : badge et gobelet repris **tels
+quels**, fond blanc et textes retirés (illisibles à 16 px), gobelet recentré
+et agrandi (×2,4) pour occuper le disque. `apple-icon.png` en est la version
+rastérisée 180 × 180, aplatie sur blanc — iOS n'accepte pas la transparence.
+Next câble les deux automatiquement depuis `src/app/`.
+
+Le favicon **change de couleur avec le thème du navigateur**, via une règle
+`@media (prefers-color-scheme: dark)` portée par le SVG lui-même. La raison
+est mesurée, pas esthétique :
+
+| | crème `#f8f6ec` | blanc | onglet sombre `#202124` |
+|---|---|---|---|
+| vert `#008037` | 4,68:1 ✓ | 5,07:1 ✓ | 3,18:1 ✓ |
+| rose `#FF66C4` | 2,44:1 ✗ | 2,64:1 ✗ | 6,09:1 ✓ |
+
+Le rose de la variante fournie passe sous le seuil de **3:1** exigé pour un
+élément graphique porteur de sens (WCAG 1.4.11) sur fond clair, mais il est
+nettement meilleur que le vert sur fond sombre. D'où le vert par défaut et le
+rose en thème sombre. La règle utilise des sélecteurs d'attribut
+(`[fill="#008037"]`), qui l'emportent sur les attributs de présentation ; un
+navigateur qui l'ignore garde le vert, qui passe partout.
+
+Les deux SVG fournis (`fresh_sweet_box_logo.svg` et
+`..._rose_sur_blanc.svg`) sont **le même dessin**, seule la couleur diffère.
+
+⚠️ Aucun des deux **ne remplace** `logo-fsb.png` dans l'en-tête et le
+pied de page : son nom et sa baseline sont du **texte vivant**
+(`font-family: Oswald, Bebas Neue, Arial Narrow, Impact`), aucune de ces
+polices n'étant chargée par la page. Les lettres changeraient donc de dessin
+d'un appareil à l'autre — inacceptable pour un logo. Il porte aussi un fond
+blanc opaque de 850 × 850, qui ferait un carré blanc sur le crème. Pour
+l'utiliser à la place du PNG : réexporter en **vectorisant les textes**
+(« convertir en contours ») et supprimer le `<rect>` de fond. Son manifeste
+C2PA pèse par ailleurs 40 % du fichier.
+
+**Le balisage structuré** (`src/lib/seo/structured-data.ts`) n'émet que les
+champs réellement connus : pas d'adresse tant qu'elle n'est pas fournie, pas
+d'horaires tant que la liste est vide, et **aucun `priceRange`** — les prix
+ne sont pas publiés sur cette page.
+
+**L'URL publique** vient de `NEXT_PUBLIC_SITE_URL` (voir `.env.example`), avec
+`https://fresh-sweet-box.zaika.mg` par défaut. Elle sert aux métadonnées
+absolues, au `sitemap.xml`, au `robots.txt` et au JSON-LD.
 
 ## Grille
 
@@ -258,6 +404,15 @@ Le blanc sur `--berry` des boutons tient parce que le texte y est à **19 px /
   décors en `aria-hidden`, textes alternatifs descriptifs.
 - `prefers-reduced-motion` neutralise animations, transitions et parallaxe ;
   le bandeau passe alors à la ligne au lieu de défiler.
+
+`WordReveal` découpe le titre en mots, chacun derrière un masque
+`overflow: hidden`. Ce masque couperait les jambages des lettres descendantes
+(j, p, g) : une réserve de `0.22em` en bas, reprise par une marge négative,
+les laisse passer sans changer l'interligne.
+
+`MaskReveal` anime un `clip-path`, qui n'est **pas** une transformation :
+`MotionConfig reducedMotion` ne le neutralise pas, la préférence système y est
+donc lue à la main, comme dans `Parallax`.
 
 Les animations d'entrée posent l'opacité à 0 dans le HTML rendu côté serveur :
 le contenu n'apparaît qu'une fois la page hydratée. C'est le compromis

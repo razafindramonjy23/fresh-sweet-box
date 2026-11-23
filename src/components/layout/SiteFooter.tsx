@@ -1,14 +1,15 @@
 import Image from "next/image";
-import { Reveal } from "@/components/motion";
+import { Reveal, Stagger, StaggerItem } from "@/components/motion";
 import { ContactIcon } from "@/components/ui/ContactIcon";
+import { FooterHours } from "./FooterHours";
 import { CONTACT_LINKS, FOOTER_LINKS, SITE } from "@/content";
 
 /** Pied de page : marque, contacts et rappel de la carte. Cible de `#contact`. */
 export function SiteFooter() {
   return (
     <Reveal as="footer" className="shell footer" id="contact">
-      <div className="footer-grid">
-        <div className="footer-brand">
+      <Stagger className="footer-grid" gap={0.09}>
+        <StaggerItem className="footer-brand">
           <a
             className="footer-logo"
             href="#accueil"
@@ -24,9 +25,9 @@ export function SiteFooter() {
           </a>
           <p className="footer-tagline">{SITE.tagline}</p>
           <p className="footer-quote">{SITE.quote}</p>
-        </div>
+        </StaggerItem>
 
-        <div>
+        <StaggerItem>
           <h2 className="eyebrow">Contacter</h2>
           <ul className="footer-list">
             {CONTACT_LINKS.map((item) => (
@@ -47,9 +48,14 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
-        </div>
+        </StaggerItem>
 
-        <div>
+        <StaggerItem>
+          <h2 className="eyebrow">Horaires</h2>
+          <FooterHours />
+        </StaggerItem>
+
+        <StaggerItem>
           <h2 className="eyebrow">La carte</h2>
           <ul className="footer-list">
             {FOOTER_LINKS.map((item) => (
@@ -58,8 +64,8 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
-        </div>
-      </div>
+        </StaggerItem>
+      </Stagger>
 
       <p className="footer-legal">
         © {SITE.copyrightYear} {SITE.name}

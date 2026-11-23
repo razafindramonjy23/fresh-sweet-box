@@ -12,6 +12,34 @@
   letter-spacing: 0.1em;
 }
 
+/* La barre colle en haut et s'efface à la descente (voir `HeaderShell`).
+   Le fond est porté par cette enveloppe pleine largeur, pas par `.nav` qui
+   est contrainte à la mesure du contenu : sinon la page défilerait à nu de
+   part et d'autre sur grand écran.
+   `position: sticky` fonctionne ici parce que `html` et `body` utilisent
+   `overflow-x: clip` et non `hidden` : aucun conteneur de défilement n'est
+   créé. */
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--cream);
+  transition:
+    background 0.3s,
+    box-shadow 0.3s;
+}
+
+.nav-bar[data-scrolled] {
+  background: rgb(248 246 236 / 88%);
+  box-shadow: 0 6px 24px rgb(40 56 43 / 7%);
+  backdrop-filter: blur(10px);
+}
+
+.nav-bar[data-scrolled] .nav {
+  min-height: 66px;
+  border-bottom-color: transparent;
+}
+
 .nav {
   position: relative;
   z-index: 10;
@@ -21,6 +49,9 @@
   gap: 24px;
   min-height: 86px;
   border-bottom: 1px solid var(--line);
+  transition:
+    min-height 0.3s,
+    border-color 0.3s;
 }
 
 .logo {

@@ -1,0 +1,22 @@
+/* Titres : montée des mots ------------------------------------------------
+   Chaque mot vit derrière un masque ; c'est le mot qui monte, pas le masque.
+   -------------------------------------------------------------------------- */
+.word-reveal {
+  display: inline;
+}
+
+.word-reveal__mask {
+  display: inline-block;
+  overflow: hidden;
+  /* Sans cette réserve, `overflow: hidden` couperait les jambages des
+     lettres descendantes (j, p, g) ; la marge négative la reprend pour que
+     l'interligne reste celui du titre. */
+  padding-bottom: 0.22em;
+  margin-bottom: -0.22em;
+  vertical-align: bottom;
+}
+
+.word-reveal__word {
+  display: inline-block;
+  will-change: transform;
+}

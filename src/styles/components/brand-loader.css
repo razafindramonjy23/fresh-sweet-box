@@ -133,3 +133,9 @@
     display: none;
   }
 }
+
+/* Déjà vu dans cette session : masqué avant la première peinture, par
+   l'attribut que pose `SPLASH_INIT_SCRIPT` (voir `src/lib/splash.ts`). */
+html[data-splash-seen] .brand-loader {
+  display: none;
+}

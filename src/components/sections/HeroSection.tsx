@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { FloatIn, Reveal, Stagger, StaggerItem } from "@/components/motion";
 import { ArrowButton } from "@/components/ui/ArrowButton";
+import { PHONE } from "@/content";
 
 /**
  * Première section : le texte d'accroche et les deux clichés.
@@ -25,10 +26,12 @@ export function HeroSection() {
           savourer. Le meilleur du frais, préparé avec soin et prêt à vous
           suivre.
         </StaggerItem>
+        {/* Un seul appel à l'action principal : commander. Le second
+            invite à parcourir, il reste en bouton secondaire. */}
         <StaggerItem className="hero-actions">
-          <ArrowButton href="#carte">Explorer la carte</ArrowButton>
-          <ArrowButton href="#esprit" variant="ghost">
-            Découvrir notre histoire
+          <ArrowButton href={PHONE.href}>Appeler pour commander</ArrowButton>
+          <ArrowButton href="#carte" variant="ghost">
+            Voir la carte
           </ArrowButton>
         </StaggerItem>
         <StaggerItem as="p" className="hero-note">

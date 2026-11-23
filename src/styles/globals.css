@@ -27,6 +27,9 @@
 @import "./components/button.css";
 @import "./components/menu-card.css";
 @import "./components/brand-loader.css";
+@import "./components/action-bar.css";
+@import "./components/scroll-progress.css";
+@import "./components/word-reveal.css";
 
 /* 4. Sections ------------------------------------------------------------ */
 @import "./sections/hero.css";

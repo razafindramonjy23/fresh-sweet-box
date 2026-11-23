@@ -1,0 +1,58 @@
+/* Barre d'action fixe (mobile) ---------------------------------------------
+   Le chemin le plus court vers une commande, à portée de pouce. Masquée
+   au-delà de 850 px : l'en-tête et le pied de page portent déjà ces liens.
+   -------------------------------------------------------------------------- */
+.action-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 60;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -6px 24px rgb(40 56 43 / 8%);
+  /* Encoche et barre d'accueil des téléphones récents. */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.action-bar__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* 52 px : au-delà du minimum de 44 px recommandé pour une cible tactile. */
+  min-height: 52px;
+  padding: 10px 12px;
+  color: var(--deep);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.action-bar__item + .action-bar__item {
+  border-left: 1px solid var(--line);
+}
+
+.action-bar__item:active {
+  background: var(--leaf);
+}
+
+.action-bar__item .footer-icon {
+  color: var(--berry);
+}
+
+@media (max-width: 850px) {
+  /* Le dernier bloc du pied de page ne doit jamais passer sous la barre. */
+  body {
+    padding-bottom: 52px;
+  }
+}
+
+@media (min-width: 851px) {
+  .action-bar {
+    display: none;
+  }
+}

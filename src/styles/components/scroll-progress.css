@@ -1,0 +1,13 @@
+/* Fil d'avancement -------------------------------------------------------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 70;
+  height: 3px;
+  background: var(--berry);
+  /* La barre grandit depuis la gauche : c'est `scaleX` qui est animé, donc
+     une seule propriété composée, jamais de recalcul de mise en page. */
+  transform-origin: 0 50%;
+}

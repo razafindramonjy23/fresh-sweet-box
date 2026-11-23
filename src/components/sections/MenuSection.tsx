@@ -1,4 +1,4 @@
-import { Stagger, StaggerItem } from "@/components/motion";
+import { Stagger, StaggerItem, WordReveal } from "@/components/motion";
 import { MenuCard } from "@/components/menu/MenuCard";
 import { MENU_ITEMS } from "@/content";
 
@@ -9,7 +9,9 @@ export function MenuSection() {
       <Stagger className="section-head">
         <StaggerItem>
           <p className="eyebrow">À chacun sa pause</p>
-          <h2>Les envies du jour</h2>
+          <h2>
+            <WordReveal text="Les envies du jour" />
+          </h2>
         </StaggerItem>
         <StaggerItem as="p">
           Du croquant, du fruité ou une touche sucrée : choisissez votre moment

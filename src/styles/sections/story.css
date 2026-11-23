@@ -56,3 +56,14 @@
   line-height: 1.4;
   color: var(--berry-text);
 }
+
+/* Même principe que les pastilles : le cadre est fixe, l'image respire.
+   `.story-photo-shift` porte la parallaxe de Framer, l'image en est un
+   enfant : les deux transformations ne se marchent pas dessus. */
+.story-photo-shift img {
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.story-photo:hover .story-photo-shift img {
+  transform: scale(1.05);
+}
