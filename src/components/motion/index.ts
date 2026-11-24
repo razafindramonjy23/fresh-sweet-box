@@ -5,4 +5,11 @@ export { FloatIn } from "./FloatIn";
 export { Parallax } from "./Parallax";
 export { WordReveal } from "./WordReveal";
 export { MaskReveal } from "./MaskReveal";
-export { DURATION, EASE, VIEWPORT, fadeUp } from "./variants";
+export {
+  DURATION,
+  EASE,
+  VIEWPORT,
+  fadeUp,
+  revealVariants,
+  type RevealFrom,
+} from "./variants";

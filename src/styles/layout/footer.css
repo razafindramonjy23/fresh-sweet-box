@@ -99,7 +99,15 @@
   color: var(--berry);
 }
 
+/* Le lien occupe toute la ligne et s'étire verticalement : la zone touchable
+   atteint 44 px de haut, contre 20 px quand elle épousait le seul texte.
+   La marge négative compense le remplissage pour que l'espacement visuel de
+   la liste ne change pas. */
 .footer-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: -11px;
   color: var(--ink);
   transition: color 0.2s;
 }
@@ -117,7 +125,7 @@
   margin: clamp(38px, 4.5vw, 58px) 0 0;
   padding-block: 22px 34px;
   border-top: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 /* Horaires : deux colonnes, les jours à gauche, l'horaire à droite. La

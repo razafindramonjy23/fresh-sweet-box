@@ -11,29 +11,3 @@
     transition: none !important;
   }
 }
-
-/* Sans animation, le bandeau passe à la ligne au lieu de défiler. */
-@media (prefers-reduced-motion: reduce) and (max-width: 760px) {
-  .ticker-track {
-    width: auto;
-  }
-
-  .ticker-group {
-    flex: 1 1 auto;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: auto;
-    gap: 6px 30px;
-    white-space: normal;
-  }
-
-  .ticker-group + .ticker-group {
-    display: none;
-  }
-
-  /* Sans défilement, plus besoin de périodicité : l'espacement revient au
-     `gap` ci-dessus et le retrait de fin déséquilibrerait le centrage. */
-  .ticker-group li {
-    padding-inline-end: 0;
-  }
-}

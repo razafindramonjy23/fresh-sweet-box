@@ -5,7 +5,14 @@
    il ne contient que des `@import`. L'ordre ci-dessous EST la cascade :
    déplacer une ligne change le rendu.
 
-   1. base/       variables, reset, règles transverses
+   0. base/theme  Tailwind + la charte (`@theme`) — toujours en premier
+   1. base/       alias courts, reset, règles transverses
+
+   Note sur la cohabitation Tailwind / CSS écrit à la main : les règles de ce
+   dossier ne sont PAS dans une `@layer`, elles l'emportent donc sur les
+   utilitaires Tailwind, qui le sont. C'est voulu — une section encore stylée
+   à la main garde la main, et passer une section en utilitaires consiste à
+   supprimer sa feuille.
    2. layout/     ossature présente sur toute la page (shell, en-tête, pied)
    3. components/ éléments réutilisables, indépendants d'une section
    4. sections/   une feuille par section de la page d'accueil
@@ -14,6 +21,7 @@
    ========================================================================= */
 
 /* 1. Base ---------------------------------------------------------------- */
+@import "./base/theme.css";
 @import "./base/tokens.css";
 @import "./base/reset.css";
 
@@ -24,8 +32,6 @@
 @import "./layout/footer.css";
 
 /* 3. Composants ---------------------------------------------------------- */
-@import "./components/button.css";
-@import "./components/menu-card.css";
 @import "./components/brand-loader.css";
 @import "./components/action-bar.css";
 @import "./components/scroll-progress.css";
@@ -33,9 +39,6 @@
 @import "./components/mask-reveal.css";
 
 /* 4. Sections ------------------------------------------------------------ */
-@import "./sections/hero.css";
-@import "./sections/ticker.css";
-@import "./sections/menu.css";
 @import "./sections/story.css";
 
 /* 5. Surcharges finales -------------------------------------------------- */

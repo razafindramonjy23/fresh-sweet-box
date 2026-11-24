@@ -1,11 +1,18 @@
-/* 2. Base --------------------------------------------------------------- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* 2. Base ---------------------------------------------------------------
 
+   Ce qui n'est PAS ici l'est volontairement : `box-sizing`, la remise à zéro
+   des marges, `img { display: block }` et `button { font: inherit }` sont
+   déjà posés par le preflight de Tailwind.
+
+   Les redéclarer ici serait pire que redondant : ce fichier n'est dans
+   aucune `@layer`, il l'emporte donc sur les utilitaires, qui le sont. La
+   règle `p { margin-top: 0 }` annulait ainsi tous les `mt-*` posés sur un
+   paragraphe. Toute règle ajoutée ici doit viser un élément ou une classe
+   qu'aucun utilitaire ne cible.
+   ----------------------------------------------------------------------- */
 html {
+  /* Repli : tant que Lenis n'a pas pris la main (pas de JavaScript, ou
+     `prefers-reduced-motion`), c'est le lissage natif qui sert. */
   scroll-behavior: smooth;
   scroll-padding-top: 96px;
   /* Les formes décoratives en rotation dépassent de quelques pixels : on les
@@ -14,8 +21,13 @@ html {
   overflow-x: clip;
 }
 
+/* Lenis est actif : il anime lui-même le défilement et les deux lissages se
+   battraient. L'attribut est posé puis retiré par <SmoothScroll>. */
+html[data-lenis] {
+  scroll-behavior: auto;
+}
+
 body {
-  margin: 0;
   background: var(--cream);
   color: var(--ink);
   font-family: var(--font-sans);
@@ -28,23 +40,6 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-button {
-  font: inherit;
-  color: inherit;
-}
-
-img {
-  display: block;
-  max-width: 100%;
-}
-
-h1,
-h2,
-h3,
-p {
-  margin-top: 0;
 }
 
 :focus-visible {

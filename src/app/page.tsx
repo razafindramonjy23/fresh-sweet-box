@@ -1,4 +1,5 @@
 import {
+  ContactSection,
   HeroSection,
   MenuSection,
   StorySection,
@@ -18,6 +19,7 @@ export default function HomePage() {
       <TickerSection />
       <MenuSection />
       <StorySection />
+      <ContactSection />
     </>
   );
 }

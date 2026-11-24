@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SplashScreen } from "@/components/layout/SplashScreen";
 import { Topline } from "@/components/layout/Topline";
 import { MotionProvider } from "@/components/providers/MotionProvider";
+import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { SkipLink } from "@/components/ui/SkipLink";
 import { config } from "@/lib/config";
@@ -97,6 +98,7 @@ export default function RootLayout({
         {/* MotionProvider pose reducedMotion="user" : il neutralise toutes
             les animations de la page si le système le demande. */}
         <MotionProvider>
+          <SmoothScroll />
           <SplashScreen />
           <ScrollProgress />
 

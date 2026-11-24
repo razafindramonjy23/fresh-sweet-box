@@ -1,4 +1,4 @@
-/** Habillage coloré de la carte, porté par une classe CSS (`.menu-card.salad`). */
+/** Habillage coloré de la carte, porté par une classe CSS (table `THEME` dans `MenuCard`). */
 export type MenuTheme = "salad" | "juice";
 
 /**

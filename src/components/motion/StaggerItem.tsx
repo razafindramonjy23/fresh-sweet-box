@@ -1,6 +1,6 @@
 "use client";
 
-import { fadeUp } from "./variants";
+import { revealVariants, type RevealFrom } from "./variants";
 import {
   MOTION_TAGS,
   type MotionBaseProps,
@@ -9,6 +9,8 @@ import {
 
 type Props = MotionBaseProps &
   MotionExtraProps & {
+    /** Sens d'entrée : `up` (défaut), `left`, `right`, `scale` ou `none`. */
+    from?: RevealFrom;
     /** Ajoute le retour au survol et à l'appui. */
     lift?: boolean;
   };
@@ -18,6 +20,7 @@ export function StaggerItem({
   as = "div",
   className,
   children,
+  from = "up",
   lift = false,
   ...rest
 }: Props) {
@@ -26,7 +29,7 @@ export function StaggerItem({
   return (
     <Comp
       className={className}
-      variants={fadeUp}
+      variants={revealVariants(from)}
       {...(lift
         ? {
             whileHover: { y: -6 },

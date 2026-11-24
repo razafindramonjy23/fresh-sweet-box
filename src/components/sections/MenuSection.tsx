@@ -19,7 +19,10 @@ export function MenuSection() {
         </StaggerItem>
       </Stagger>
 
-      <Stagger className="menu-grid" gap={0.1}>
+      <Stagger
+        className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5"
+        gap={0.1}
+      >
         {MENU_ITEMS.map((item) => (
           <MenuCard key={item.title} item={item} />
         ))}

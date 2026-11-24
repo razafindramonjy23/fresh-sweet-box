@@ -1,0 +1,86 @@
+/* 0. Tailwind + charte --------------------------------------------------- */
+
+/*
+ * Point d'entrée de Tailwind v4 : l'import amène le preflight, les variantes
+ * et le moteur d'utilitaires. Il doit rester la toute première règle de la
+ * cascade (voir `globals.css`).
+ *
+ * `@source` est déclaré explicitement parce que la détection automatique part
+ * du dossier du fichier CSS : sans lui, Tailwind ne regarderait que
+ * `src/styles/` et ne verrait aucune classe.
+ */
+@import "tailwindcss";
+@source "../../../src";
+
+/*
+ * La charte, déclarée une seule fois ici.
+ *
+ * Chaque entrée d'un `@theme` fait deux choses à la fois : elle publie la
+ * variable CSS sur `:root` ET elle crée les utilitaires correspondants
+ * (`--color-deep` donne `bg-deep`, `text-deep`, `border-deep`…). C'est pour
+ * cela que la palette vit ici et non dans `tokens.css`, qui se contente
+ * désormais d'en reprendre les alias courts utilisés par le CSS historique.
+ */
+@theme {
+  /* Palette */
+  --color-cream: #f8f6ec;
+  --color-paper: #fffefa;
+  --color-deep: #334b37;
+  --color-sage: #748c66;
+  --color-leaf: #dce6d1;
+  --color-berry: #d94e88;
+  /* Framboise assombrie pour le texte : #d94e88 plafonne à 3,59:1 sur crème,
+     sous le seuil de 4,5:1. Celle-ci tient 5,04:1. Les aplats (boutons,
+     pastilles) gardent --color-berry. */
+  --color-berry-ink: #bb3669;
+  --color-peach: #f8d9ca;
+  --color-ink: #28382b;
+  --color-muted: #697365;
+  --color-line: #e5e5d8;
+
+  /* Fonds pastel des cartes de la carte */
+  --color-card-salad: #e5ecd9;
+  --color-card-juice: #f8e0e9;
+
+  /* Typographie : Poppins pour les titres, DM Sans pour le texte. Les deux
+     polices sont chargées par `next/font` (voir `src/app/layout.tsx`), qui
+     définit `--font-poppins` et `--font-dm-sans` sur <html>. */
+  --font-display: var(--font-poppins, "Avenir Next"), system-ui, sans-serif;
+  --font-sans:
+    var(--font-dm-sans, system-ui), -apple-system, "Segoe UI", "Helvetica Neue",
+    sans-serif;
+
+  /* Courbe d'animation partagée avec le dossier `components/motion`. */
+  --ease-brand: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* Bandeau défilant : la piste contient deux exemplaires identiques de la
+     liste et se décale d'exactement la moitié, donc d'un exemplaire. Le
+     raccord tombe pile sur le début du premier : aucun saut. */
+  --animate-ticker: ticker-slide 44s linear infinite;
+
+  @keyframes ticker-slide {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Largeur de la grille : nav, hero, sections et pied de page s'alignent
+     dessus. `max-w-measure` dans le balisage. */
+  --container-measure: 1200px;
+}
+
+/*
+ * Gouttière de page, en utilitaire Tailwind plutôt qu'en classe écrite à la
+ * main : `@utility` l'enregistre dans la couche `utilities`, il se compose
+ * donc normalement avec les variantes (`md:`, `hover:`…) et reste surchargeable
+ * par une classe plus spécifique, ce que ne permettait pas l'ancien `.shell`.
+ */
+@utility shell-x {
+  width: 100%;
+  max-width: calc(var(--container-measure) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}

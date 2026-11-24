@@ -27,21 +27,21 @@ export function StorySection() {
         </MaskReveal>
 
         <Stagger className="story-copy">
-          <StaggerItem as="p" className="eyebrow">
+          <StaggerItem as="p" className="eyebrow" from="right">
             Notre esprit
           </StaggerItem>
-          <StaggerItem as="h2">
+          <StaggerItem as="h2" from="right">
             <WordReveal text="Le frais d’un bar à salade, le plaisir d’un bar à desserts" />
           </StaggerItem>
-          <StaggerItem as="p" className="story-body">
+          <StaggerItem as="p" className="story-body" from="right">
             Tout part de fruits et légumes coupés le jour même. On compose
             devant vous, on garnit généreusement, et on referme le gobelet pour
             que ça voyage bien.
           </StaggerItem>
-          <StaggerItem as="p" className="story-quote">
+          <StaggerItem as="p" className="story-quote" from="right">
             {SITE.quote}
           </StaggerItem>
-          <StaggerItem>
+          <StaggerItem from="right">
             <ArrowButton href="#carte">Voir la carte</ArrowButton>
           </StaggerItem>
         </Stagger>

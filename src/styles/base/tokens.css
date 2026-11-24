@@ -1,40 +1,37 @@
-/* 1. Tokens ------------------------------------------------------------- */
+/* 1. Alias courts de la charte ------------------------------------------ */
+
+/*
+ * La palette et les polices sont définies dans `theme.css`, à l'intérieur du
+ * bloc `@theme` de Tailwind — c'est ce qui en fait à la fois des variables
+ * CSS et des utilitaires (`bg-deep`, `font-display`…).
+ *
+ * Ce fichier ne fait que reprendre ces valeurs sous les noms courts employés
+ * par le CSS écrit à la main (`var(--deep)`, `var(--berry)`…). Il disparaîtra
+ * quand la dernière feuille de `sections/` sera passée en utilitaires ; d'ici
+ * là, une seule source de vérité : `theme.css`.
+ */
 :root {
-  /* Palette */
-  --cream: #f8f6ec;
-  --paper: #fffefa;
-  --deep: #334b37;
-  --sage: #748c66;
-  --leaf: #dce6d1;
-  --berry: #d94e88;
-  /* Framboise assombrie pour le texte : #d94e88 plafonne à 3,59:1 sur
-     crème, sous le seuil de 4,5:1. Celle-ci tient 5,04:1. Les aplats
-     (boutons, pastilles) gardent --berry. */
-  --berry-text: #bb3669;
-  --peach: #f8d9ca;
-  --ink: #28382b;
-  --muted: #697365;
-  --line: #e5e5d8;
+  --cream: var(--color-cream);
+  --paper: var(--color-paper);
+  --deep: var(--color-deep);
+  --sage: var(--color-sage);
+  --leaf: var(--color-leaf);
+  --berry: var(--color-berry);
+  --berry-text: var(--color-berry-ink);
+  --peach: var(--color-peach);
+  --ink: var(--color-ink);
+  --muted: var(--color-muted);
+  --line: var(--color-line);
 
-  /* Fonds pastel des cartes */
-  --card-salad: #e5ecd9;
-  --card-juice: #f8e0e9;
+  --card-salad: var(--color-card-salad);
+  --card-juice: var(--color-card-juice);
 
-  /* Typographie : Poppins pour les titres, DM Sans pour le texte — les
-     mêmes piles que fresh-sweet-box.zaika.mg.
-
-     Les deux polices sont désormais **réellement chargées** : `next/font`
-     les télécharge au build et les sert depuis notre domaine (voir
-     `src/app/layout.tsx`), en définissant `--font-poppins` et
-     `--font-dm-sans` sur <html>. Les piles ci-dessous ne font que les
-     reprendre, avec un repli système si la variable venait à manquer. */
   --font-display: var(--font-poppins, "Avenir Next"), system-ui, sans-serif;
   --font-sans:
     var(--font-dm-sans, system-ui), -apple-system, "Segoe UI", "Helvetica Neue",
     sans-serif;
 
-  /* Grille : une seule mesure pour toute la page.
-     Nav, hero, sections et pied de page s'alignent dessus. */
-  --measure: 1200px;
+  /* Grille : une seule mesure pour toute la page. */
+  --measure: var(--container-measure);
   --gutter: clamp(20px, 5.4vw, 78px);
 }

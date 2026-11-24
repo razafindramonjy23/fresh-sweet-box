@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import type { Critter } from "@/components/ui/fuzzy-critter-footer";
 
 /**
@@ -27,32 +28,41 @@ const FuzzyCritterFooter = dynamic(
 );
 
 /**
- * De vraies silhouettes de fruits (option 2), toujours en pelage duveteux.
- * Six teintes distinctes pour éviter les doublons : fraise (rouge), citron
- * (jaune), poire (vert), myrtille (bleu), pêche (pêche), raisin (violet).
- * Chaque paire est [racine, pointe] du pelage.
+ * Les fruits à milkshake de la carte, en pelage duveteux.
+ *
+ * Chacun se reconnaît à trois choses : sa silhouette, sa couleur, et surtout
+ * son accessoire (collerette, plumet, queue, feuille) — voir `propsFor` dans
+ * `fuzzy-critter-footer`. Six teintes bien distinctes pour qu'aucun doublon
+ * ne se lise à 60 px de haut. Chaque paire est [racine, pointe] du pelage.
  */
 const CRITTERS_DESKTOP: Critter[] = [
   {
     shape: "strawberry",
     colors: ["#e23046", "#ff95a2"],
     eyes: "short",
-    size: 0.6,
+    size: 0.62,
   },
-  { shape: "lemon", colors: ["#e6bd1e", "#fff07f"], eyes: "pills", size: 0.58 },
-  { shape: "pear", colors: ["#8fae34", "#dcec9c"], eyes: "big", size: 0.6 },
+  { shape: "banana", colors: ["#e3b61f", "#fff0a0"], eyes: "pills", size: 0.6 },
+  { shape: "orange", colors: ["#ef8418", "#ffc271"], eyes: "big", size: 0.56 },
+  {
+    shape: "pineapple",
+    colors: ["#d7a017", "#ffe49a"],
+    eyes: "dashes",
+    size: 0.62,
+  },
   {
     shape: "blueberry",
     colors: ["#3b5aa6", "#9fb6ec"],
     eyes: "short",
-    size: 0.5,
+    size: 0.46,
   },
-  { shape: "peach", colors: ["#f0a97a", "#ffd8c2"], eyes: "pills", size: 0.58 },
   {
-    shape: "grape",
-    colors: ["#7d4fa8", "#c7a8e6"],
-    eyes: "dashes",
-    size: 0.54,
+    shape: "mango",
+    // joue rouge sur l'épaule haute, chair jaune en dessous
+    colors: ["#f0a51f", "#ffd77a"],
+    capColors: ["#d8452f", "#ff8f6d"],
+    eyes: "pills",
+    size: 0.58,
   },
 ];
 
@@ -62,15 +72,20 @@ const CRITTERS_MOBILE: Critter[] = [
     shape: "strawberry",
     colors: ["#e23046", "#ff95a2"],
     eyes: "short",
-    size: 0.86,
+    size: 0.88,
   },
-  { shape: "lemon", colors: ["#e6bd1e", "#fff07f"], eyes: "pills", size: 0.82 },
-  { shape: "pear", colors: ["#8fae34", "#dcec9c"], eyes: "big", size: 0.86 },
+  {
+    shape: "banana",
+    colors: ["#e3b61f", "#fff0a0"],
+    eyes: "pills",
+    size: 0.84,
+  },
+  { shape: "orange", colors: ["#ef8418", "#ffc271"], eyes: "big", size: 0.8 },
   {
     shape: "blueberry",
     colors: ["#3b5aa6", "#9fb6ec"],
     eyes: "short",
-    size: 0.78,
+    size: 0.68,
   },
 ];
 
@@ -79,18 +94,11 @@ const MOBILE_QUERY = "(max-width: 640px)";
 export function FooterCritters() {
   const sentinel = useRef<HTMLDivElement | null>(null);
   const [show, setShow] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   // Taille d'écran : choisit le jeu de fruits et le profil de rendu. On
   // n'écoute que le franchissement du seuil, pas chaque pixel, pour ne pas
   // reconstruire la scène à tout bout de champ.
-  useEffect(() => {
-    const mq = window.matchMedia(MOBILE_QUERY);
-    setIsMobile(mq.matches);
-    const onChange = () => setIsMobile(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
+  const isMobile = useMediaQuery(MOBILE_QUERY);
 
   // Montage différé : on n'instancie `three` que lorsque le pied de page
   // approche de l'écran.

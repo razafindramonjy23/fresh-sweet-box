@@ -13,11 +13,16 @@ export type CritterShape =
   | "triangle"
   | "bean"
   | "puff"
-  // Fruits (option 2) : de vraies silhouettes, toujours recouvertes de fourrure.
+  // Fruits : de vraies silhouettes, toujours recouvertes de fourrure, et
+  // reconnaissables par leur accessoire (queue, feuille, collerette, plumet).
   | "strawberry"
+  | "banana"
+  | "orange"
+  | "pineapple"
+  | "blueberry"
+  | "mango"
   | "lemon"
   | "pear"
-  | "blueberry"
   | "peach"
   | "grape";
 export type CritterEyes = "pills" | "short" | "dashes" | "big";
@@ -26,6 +31,11 @@ export type Critter = {
   shape: CritterShape;
   /** [root, tip] fur colours */
   colors: [string, string];
+  /** Optional second [root, tip] palette for the shape's "cap" zone — the top
+   *  band of the body (see `SHAPES[].cap`). Lets one creature wear two
+   *  colours, e.g. a mango that ripens from yellow to red. Ignored on shapes
+   *  with no cap zone. */
+  capColors?: [string, string];
   eyes: CritterEyes;
   /** Relative size, 0.5–1.8 */
   size?: number;
@@ -374,9 +384,9 @@ export function bendFor(top: number, height: number, viewport: number) {
 // ---------- creatures ----------
 
 const FUR_VERT =
-  "attribute vec3 aRoot;attribute vec3 aNrm;attribute vec4 aHair;" +
+  "attribute vec3 aRoot;attribute vec3 aNrm;attribute vec4 aHair;attribute float aCap;" +
   "uniform float uTime,uWind,uJolt,uStroke;uniform vec3 uHand;" +
-  "varying float vS;varying float vTint;varying vec3 vN;" +
+  "varying float vS;varying float vTint;varying float vCap;varying vec3 vN;" +
   "void main(){" +
   "float s=position.y;float s2=s*s;vec3 n=normalize(aNrm);" +
   "vec3 ref=abs(n.y)<0.9?vec3(0.,1.,0.):vec3(1.,0.,0.);" +
@@ -391,13 +401,15 @@ const FUR_VERT =
   "vec3 off=aRoot-uHand;float f=uStroke*smoothstep(.42,0.,length(off));" +
   "vec3 tang=off-n*dot(off,n);tang=length(tang)>1e-4?normalize(tang):side;" +
   "p+=tang*(f*s2*len*1.5)-n*(f*s*len*.35);" +
-  "vS=s;vTint=aHair.w;vN=normalize(mat3(modelMatrix)*n);" +
+  "vS=s;vTint=aHair.w;vCap=aCap;vN=normalize(mat3(modelMatrix)*n);" +
   "gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}";
 
 const FUR_FRAG =
-  "uniform vec3 uRoot,uMid,uTip,uSun;varying float vS;varying float vTint;varying vec3 vN;" +
+  "uniform vec3 uRoot,uMid,uTip,uRootB,uMidB,uTipB,uSun;" +
+  "varying float vS;varying float vTint;varying float vCap;varying vec3 vN;" +
   "void main(){" +
-  "vec3 c=mix(uRoot,uMid,smoothstep(0.,.45,vS));c=mix(c,uTip,smoothstep(.5,1.,vS));" +
+  "vec3 r=mix(uRoot,uRootB,vCap),m=mix(uMid,uMidB,vCap),t=mix(uTip,uTipB,vCap);" +
+  "vec3 c=mix(r,m,smoothstep(0.,.45,vS));c=mix(c,t,smoothstep(.5,1.,vS));" +
   "c*=.94+vTint*.12;" +
   "float lit=max(dot(normalize(vN),normalize(uSun)),0.)*.32+.8;" +
   "c*=lit*mix(.86,1.,smoothstep(0.,.5,vS));" +
@@ -410,20 +422,53 @@ const EYES: Record<CritterEyes, [number, number, number, number]> = {
   dashes: [0.038, 0.13, 1.2, 0.15],
   big: [0.068, 0.11, 0, 0.115],
 };
-const EYE_LINE: Record<CritterShape, number> = {
-  cloud: 0.05,
-  flower: 0.05,
-  cube: 0.05,
-  triangle: -0.16,
-  bean: 0.02,
-  puff: -0.03,
-  // Fruits : hauteur du regard sur chaque silhouette.
-  strawberry: 0.1,
-  lemon: 0.0,
-  pear: -0.08,
-  blueberry: 0.0,
-  peach: 0.0,
-  grape: 0.0,
+/**
+ * Per-shape rendering profile.
+ *
+ * `fur` is the strand length in body units — the bodies are all built around
+ * a radius of 0.5, so 0.15 is a pelt a third as deep as the body is wide.
+ * That is fine on an abstract blob, but on a fruit it swallows the outline:
+ * the notch of a strawberry or the waist of a pear simply vanish under it.
+ * The fruits therefore wear a much shorter coat, and lean on their prop
+ * (see `propsFor`) for the rest of the recognition.
+ *
+ * `eyeY` is the height of the eye line, `cap` the body-space y above which
+ * strands take the creature's second palette (`Critter.capColors`).
+ */
+type ShapeProfile = {
+  eyeY: number;
+  fur: number;
+  cap?: number;
+  /** Tilt of the cap boundary, radians. 0 is a horizontal line; a mango's
+   *  blush sits on one shoulder, so its boundary runs on the diagonal. */
+  capTilt?: number;
+  /** Half-width of the fade across the cap boundary (default 0.12) */
+  capFade?: number;
+};
+
+const SHAPES: Record<CritterShape, ShapeProfile> = {
+  cloud: { eyeY: 0.05, fur: 0.15 },
+  flower: { eyeY: 0.05, fur: 0.15 },
+  cube: { eyeY: 0.05, fur: 0.15 },
+  triangle: { eyeY: -0.16, fur: 0.15 },
+  bean: { eyeY: 0.02, fur: 0.15 },
+  puff: { eyeY: -0.03, fur: 0.15 },
+  // Fruits : pelage court pour laisser voir la silhouette.
+  strawberry: { eyeY: -0.04, fur: 0.085 },
+  banana: { eyeY: -0.02, fur: 0.07 },
+  orange: { eyeY: 0.0, fur: 0.095 },
+  pineapple: { eyeY: -0.04, fur: 0.08 },
+  blueberry: { eyeY: 0.0, fur: 0.08 },
+  mango: { eyeY: -0.02, fur: 0.085, cap: 0.08, capTilt: 0.7, capFade: 0.2 },
+  lemon: { eyeY: 0.0, fur: 0.085 },
+  pear: { eyeY: -0.1, fur: 0.085 },
+  peach: { eyeY: 0.0, fur: 0.085 },
+  grape: { eyeY: 0.0, fur: 0.085 },
+};
+
+const smoothstep = (a: number, b: number, x: number) => {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a || 1e-6)));
+  return t * t * (3 - 2 * t);
 };
 
 const hash = (n: number) => {
@@ -443,12 +488,18 @@ function darker(hex: string, k: number) {
   );
 }
 
-function puffUp(outline: THREE.Shape) {
+/**
+ * Inflate a flat outline into a body. `bevel` is the rounding applied all
+ * round the outline — and it is uniform, so it eats any feature thinner than
+ * itself: at the default 0.1 a strawberry's tip comes out as a dome and the
+ * fruit reads as a tomato. Hence the shallower bevel on the fruits.
+ */
+function puffUp(outline: THREE.Shape, bevel = 0.1) {
   const g = new THREE.ExtrudeGeometry(outline, {
     depth: 0.3,
     bevelEnabled: true,
-    bevelThickness: 0.14,
-    bevelSize: 0.1,
+    bevelThickness: bevel * 1.4,
+    bevelSize: bevel,
     bevelSegments: 6,
     curveSegments: 24,
   });
@@ -478,6 +529,46 @@ function polar(radius: (t: number) => number, sx = 1, sy = 1, steps = 180) {
   return s;
 }
 
+/**
+ * A crescent band: the outer arc from `a0` to `a1`, a round cap, the inner arc
+ * back, a second cap. `polar` cannot draw this — a crescent is not star-shaped
+ * about any single centre, so a radius-per-angle function has no way to
+ * describe it.
+ */
+function crescent(
+  ri: number,
+  ro: number,
+  a0: number,
+  a1: number,
+  sx = 1,
+  sy = 1,
+  steps = 72,
+) {
+  const mid = (ri + ro) / 2,
+    half = (ro - ri) / 2;
+  const pts: [number, number][] = [];
+  const at = (a: number, r: number) =>
+    pts.push([Math.cos(a) * r, Math.sin(a) * r]);
+  const cap = (a: number, from: number) => {
+    const cx = Math.cos(a) * mid,
+      cy = Math.sin(a) * mid;
+    for (let k = 0; k <= steps / 4; k++) {
+      const w = from + (k / (steps / 4)) * Math.PI;
+      pts.push([cx + Math.cos(w) * half, cy + Math.sin(w) * half]);
+    }
+  };
+  for (let k = 0; k <= steps; k++) at(a0 + (a1 - a0) * (k / steps), ro);
+  cap(a1, a1);
+  for (let k = steps; k >= 0; k--) at(a0 + (a1 - a0) * (k / steps), ri);
+  cap(a0, a0 + Math.PI);
+  const s = new THREE.Shape();
+  pts.forEach(([x, y], k) =>
+    k ? s.lineTo(x * sx, y * sy) : s.moveTo(x * sx, y * sy),
+  );
+  s.closePath();
+  return s;
+}
+
 function bodyGeometry(shape: CritterShape): THREE.BufferGeometry {
   // --- Fruits (option 2) -------------------------------------------------
   // Chaque fruit est un contour polaire extrudé puis lissé, comme les autres
@@ -491,34 +582,73 @@ function bodyGeometry(shape: CritterShape): THREE.BufferGeometry {
   };
   const bump = (t: number, w: number) => Math.exp(-(t * t) / w);
   if (shape === "blueberry")
-    // baie bien ronde, à peine aplatie
-    return puffUp(polar(() => 0.5, 1, 0.92));
+    // petite baie bien ronde : c'est sa collerette qui la signe, pas son contour
+    return puffUp(
+      polar(() => 0.5, 1, 0.94),
+      0.07,
+    );
+  if (shape === "orange")
+    // sphère franche, à peine aplatie aux pôles
+    return puffUp(
+      polar(() => 0.5, 1, 0.95),
+      0.07,
+    );
+  if (shape === "banana")
+    // croissant fin : la seule silhouette du lot qui se lise sans accessoire
+    return puffUp(
+      crescent(0.58, 0.79, Math.PI * 1.14, Math.PI * 1.86, 0.84, 1.34),
+      0.045,
+    );
+  if (shape === "pineapple")
+    // tonneau haut, légèrement facetté, surmonté de son plumet
+    return puffUp(
+      polar((t) => 0.47 + 0.03 * Math.cos(9 * t), 0.82, 1.2),
+      0.06,
+    );
+  if (shape === "mango")
+    // ovale joufflu et penché, une épaule plus haute que l'autre
+    return puffUp(
+      polar((t) => 0.44 + 0.095 * Math.cos(t + 2.5), 1.26, 0.88),
+      0.06,
+    );
   if (shape === "grape")
-    // petite grappe : cercle bosselé
-    return puffUp(polar((t) => 0.46 + 0.045 * Math.cos(6 * t)));
+    // petite grappe : cercle nettement bosselé
+    return puffUp(
+      polar((t) => 0.44 + 0.085 * Math.cos(6 * t)),
+      0.06,
+    );
   if (shape === "peach")
-    // ronde avec un léger sillon au sommet
-    return puffUp(polar((t) => 0.5 - 0.06 * bump(top(t), 0.03), 1, 0.98));
+    // ronde avec un sillon marqué au sommet
+    return puffUp(
+      polar((t) => 0.5 - 0.12 * bump(top(t), 0.04), 1, 0.98),
+      0.07,
+    );
   if (shape === "lemon")
     // ellipse allongée, pointée aux deux bouts
     return puffUp(
       polar(
-        (t) => 0.4 + 0.1 * Math.pow(Math.abs(Math.cos(t + Math.PI / 2)), 8),
-        1.24,
-        0.9,
+        (t) => 0.4 + 0.13 * Math.pow(Math.abs(Math.cos(t + Math.PI / 2)), 6),
+        1.28,
+        0.88,
       ),
+      0.06,
     );
   if (shape === "pear")
     // col étroit en haut, bulbe large en bas
-    return puffUp(polar((t) => 0.4 + 0.15 * ((1 - Math.cos(t)) / 2), 1, 1.08));
+    return puffUp(
+      polar((t) => 0.36 + 0.24 * ((1 - Math.cos(t)) / 2), 1, 1.12),
+      0.06,
+    );
   if (shape === "strawberry")
-    // goutte : épaules en cœur en haut, pointe en bas
+    // goutte franche : épaules larges et hautes, vraie pointe en bas
     return puffUp(
       polar(
-        (t) => 0.5 * (0.62 + 0.38 * Math.cos(t)) - 0.09 * bump(top(t), 0.02),
-        1,
-        1.12,
+        (t) =>
+          Math.max(0.06, 0.27 + 0.29 * Math.cos(t)) - 0.07 * bump(top(t), 0.05),
+        0.94,
+        1.46,
       ),
+      0.04,
     );
   if (shape === "cube") return new RoundedBoxGeometry(1, 1, 1, 8, 0.24);
   if (shape === "cloud")
@@ -581,6 +711,164 @@ function bodyGeometry(shape: CritterShape): THREE.BufferGeometry {
   });
   s.closePath();
   return puffUp(s);
+}
+
+// ---------- accessoires : queue, feuille, collerette, plumet -------------
+// Ce sont eux, bien plus que le contour, qui font lire « fruit » : une fraise
+// se reconnaît à sa collerette, un ananas à son plumet, une orange à sa
+// feuille. Volumes lisses (pas de fourrure) pour trancher sur le pelage, posés
+// dans le plan du fruit et débordant au-dessus de lui.
+
+const LEAF = "#6b9c3f";
+const LEAF_DARK = "#4a7329";
+const STALK = "#8a6a3b";
+
+/** A pointed leaf rooted at the origin, growing along +x. */
+function leafShape(len: number, wide: number) {
+  const s = new THREE.Shape();
+  s.moveTo(0, 0);
+  s.quadraticCurveTo(len * 0.42, wide, len, 0);
+  s.quadraticCurveTo(len * 0.42, -wide, 0, 0);
+  return s;
+}
+
+/** A short tapered stalk rooted at the origin, leaning as it rises. */
+function stalkShape(h: number, w: number, lean = 0.22) {
+  const s = new THREE.Shape();
+  s.moveTo(-w, 0);
+  s.quadraticCurveTo(-w * 0.7 + lean * h * 0.5, h * 0.6, lean * h - w * 0.5, h);
+  s.lineTo(lean * h + w * 0.5, h);
+  s.quadraticCurveTo(w * 0.7 + lean * h * 0.5, h * 0.6, w, 0);
+  s.closePath();
+  return s;
+}
+
+/** An n-pointed calyx (strawberry hull, blueberry crown) centred on origin. */
+function calyxShape(points: number, outer: number, inner: number) {
+  const s = new THREE.Shape();
+  for (let k = 0; k < points * 2; k++) {
+    const a = (k / (points * 2)) * Math.PI * 2 + Math.PI / 2;
+    const r = k % 2 ? inner : outer;
+    const x = Math.cos(a) * r,
+      y = Math.sin(a) * r;
+    if (k) s.lineTo(x, y);
+    else s.moveTo(x, y);
+  }
+  s.closePath();
+  return s;
+}
+
+/** A prop's geometry: a thin bevelled extrusion, centred on its own depth. */
+function flatProp(shape: THREE.Shape, depth = 0.1) {
+  const g = new THREE.ExtrudeGeometry(shape, {
+    depth,
+    bevelEnabled: true,
+    bevelThickness: 0.045,
+    bevelSize: 0.03,
+    bevelSegments: 3,
+    curveSegments: 16,
+  });
+  g.translate(0, 0, -depth / 2);
+  return smooth(g);
+}
+
+export type CritterProps = {
+  group: THREE.Group;
+  /** Half the prop's on-screen width, body units — feeds the collision reach */
+  halfWidth: number;
+};
+
+/**
+ * The prop a shape wears, built in body space from the body's bounding box so
+ * it sits on the actual outline rather than a guessed height. Shapes with no
+ * prop (the abstract blobs) return null.
+ */
+function propsFor(
+  shape: CritterShape,
+  box: THREE.Box3,
+  front: number,
+): CritterProps | null {
+  const group = new THREE.Group();
+  const mats = new Map<string, THREE.MeshBasicMaterial>();
+  const add = (
+    geo: THREE.BufferGeometry,
+    color: string,
+    x: number,
+    y: number,
+    rot = 0,
+    z = 0,
+  ) => {
+    let m = mats.get(color);
+    if (!m) {
+      m = new THREE.MeshBasicMaterial({ color: new THREE.Color(color) });
+      mats.set(color, m);
+    }
+    const mesh = new THREE.Mesh(geo, m);
+    // in front of the pelt, just behind the eyes: a stalk half-buried in fur
+    // reads as a smudge, and the fruits live or die by their prop
+    mesh.position.set(x, y, front + 0.09 + z);
+    mesh.rotation.z = rot;
+    group.add(mesh);
+  };
+  const top = box.max.y,
+    right = box.max.x;
+
+  if (shape === "strawberry") {
+    // large collerette à sept pointes, couchée sur les épaules : c'est elle,
+    // et pas le contour, qui sépare une fraise d'une tomate
+    add(flatProp(stalkShape(0.15, 0.04)), STALK, 0.01, top - 0.04, 0, -0.01);
+    add(flatProp(calyxShape(7, 0.36, 0.12), 0.08), LEAF, 0, top - 0.09, 0.22);
+  } else if (shape === "blueberry") {
+    // petite étoile au sommet, comme la cicatrice du calice
+    add(flatProp(calyxShape(5, 0.21, 0.07), 0.08), LEAF_DARK, 0, top - 0.11);
+  } else if (shape === "pineapple") {
+    // plumet : cinq feuilles en éventail, les plus longues au centre
+    const fan: [number, number, number][] = [
+      [0.3, 2.5, 0],
+      [0.4, 2.05, 0],
+      [0.46, Math.PI / 2, 1],
+      [0.4, 1.09, 0],
+      [0.3, 0.64, 0],
+    ];
+    fan.forEach(([len, a, mid]) =>
+      add(
+        flatProp(leafShape(len, 0.075), 0.08),
+        mid ? LEAF : LEAF_DARK,
+        0,
+        top - 0.1,
+        a,
+        mid ? 0.02 : 0,
+      ),
+    );
+  } else if (shape === "banana") {
+    // pédoncule brun, couché dans l'axe de la pointe haute droite
+    add(
+      flatProp(stalkShape(0.16, 0.035, 0.3), 0.08),
+      STALK,
+      right - 0.09,
+      top - 0.1,
+      -0.45,
+    );
+  } else if (
+    shape === "orange" ||
+    shape === "mango" ||
+    shape === "lemon" ||
+    shape === "pear" ||
+    shape === "peach" ||
+    shape === "grape"
+  ) {
+    // queue + une feuille penchée : la signature « fruit cueilli »
+    add(flatProp(stalkShape(0.19, 0.042)), STALK, 0, top - 0.05);
+    add(flatProp(leafShape(0.33, 0.1)), LEAF, 0.04, top + 0.08, 0.42);
+  } else {
+    return null;
+  }
+
+  const b = new THREE.Box3().setFromObject(group);
+  return {
+    group,
+    halfWidth: Math.max(Math.abs(b.min.x), Math.abs(b.max.x)),
+  };
 }
 
 /** Half the on-screen width of a body turned by its resting tilt and yaw */
@@ -667,7 +955,11 @@ export default function FuzzyCritterFooter({
   const hazeRef = React.useRef(null as HTMLDivElement | null);
   const dropRef = React.useRef(() => {});
   const live = React.useRef({ onDrop, onCritterClick, sound, volume });
-  live.current = { onDrop, onCritterClick, sound, volume };
+  // Écrit après le rendu, jamais pendant : la scène ne lit `live.current`
+  // que depuis ses gestionnaires d'événements, donc toujours après coup.
+  React.useEffect(() => {
+    live.current = { onDrop, onCritterClick, sound, volume };
+  });
   const [ready, setReady] = React.useState(false);
 
   // ---- the scene: creatures, physics, pointer ----
@@ -758,31 +1050,45 @@ export default function FuzzyCritterFooter({
     const bodies: Body[] = [];
     const rigs: Rig[] = critters.map((spec, i) => {
       const k = Math.max(0.5, Math.min(1.8, spec.size ?? 1));
+      const profile = SHAPES[spec.shape];
       const geo = bodyGeometry(spec.shape);
       geo.computeBoundingBox();
-      const front = geo.boundingBox ? geo.boundingBox.max.z : 0.3;
+      const box =
+        geo.boundingBox ??
+        new THREE.Box3(
+          new THREE.Vector3(-0.5, -0.5, -0.3),
+          new THREE.Vector3(0.5, 0.5, 0.3),
+        );
+      const front = box.max.z;
       const yaw = -0.22 + hash(i * 3.3) * 0.3;
-      const reach = halfWidth(geo, 0.16, yaw) + 0.24; // on-screen half-width, longest (curled) fur included
+      const props = propsFor(spec.shape, box, front);
+      // on-screen half-width: the body in its resting pose with the longest
+      // (curled) fur, or the prop when that reaches further out
+      const reach = Math.max(
+        halfWidth(geo, 0.16, yaw) + profile.fur * 1.6 + 0.07,
+        props ? props.halfWidth + 0.05 : 0,
+      );
       const core = new THREE.Mesh(
         geo,
         new THREE.MeshBasicMaterial({ color: new THREE.Color(spec.colors[0]) }),
       );
       const [er, el, tilt, gap] = EYES[spec.eyes];
-      const eyeY = EYE_LINE[spec.shape];
+      const eyeY = profile.eyeY;
       const clear = er + el / 2 + 0.09;
 
       // fur roots sampled over the body; strands near the eyes are trimmed so the eyes sit in a dip
       const sampler = new MeshSurfaceSampler(core).build();
       const roots = new Float32Array(strands * 3),
         nrms = new Float32Array(strands * 3),
-        hair = new Float32Array(strands * 4);
+        hair = new Float32Array(strands * 4),
+        caps = new Float32Array(strands);
       const p = new THREE.Vector3(),
         n = new THREE.Vector3();
       for (let s = 0; s < strands; s++) {
         const seed = s * 7.13 + i * 97;
         sampler.sample(p, n);
         n.normalize();
-        let len = 0.15 * (0.86 + hash(seed + 3.1) * 0.28);
+        let len = profile.fur * (0.86 + hash(seed + 3.1) * 0.28);
         if (n.z > 0.4 && p.z > front - 0.2) {
           const d = Math.min(
             Math.hypot(p.x - gap, p.y - eyeY),
@@ -792,7 +1098,8 @@ export default function FuzzyCritterFooter({
         }
         const bend =
           n.z > 0.55
-            ? (0.42 + hash(seed + 7.9) * 0.36) * Math.min(1, len / 0.12)
+            ? (0.42 + hash(seed + 7.9) * 0.36) *
+              Math.min(1, len / (profile.fur * 0.8))
             : (hash(seed + 7.9) - 0.5) * 0.38;
         roots.set([p.x, p.y, p.z], s * 3);
         nrms.set([n.x, n.y, n.z], s * 3);
@@ -800,6 +1107,12 @@ export default function FuzzyCritterFooter({
           [hash(seed + 5.3) * Math.PI * 2, len, bend, hash(seed + 9.2)],
           s * 4,
         );
+        if (profile.cap !== undefined) {
+          const a = profile.capTilt ?? 0,
+            fade = profile.capFade ?? 0.12;
+          const axis = p.y * Math.cos(a) + p.x * Math.sin(a);
+          caps[s] = smoothstep(profile.cap - fade, profile.cap + fade, axis);
+        }
       }
       const fg = new THREE.InstancedBufferGeometry();
       fg.setAttribute(
@@ -810,6 +1123,7 @@ export default function FuzzyCritterFooter({
       fg.setAttribute("aRoot", new THREE.InstancedBufferAttribute(roots, 3));
       fg.setAttribute("aNrm", new THREE.InstancedBufferAttribute(nrms, 3));
       fg.setAttribute("aHair", new THREE.InstancedBufferAttribute(hair, 4));
+      fg.setAttribute("aCap", new THREE.InstancedBufferAttribute(caps, 1));
       fg.instanceCount = strands;
       const u = {
         uJolt: { value: 0 },
@@ -818,6 +1132,7 @@ export default function FuzzyCritterFooter({
       };
       // ShaderMaterial skips the output transform, so hand it display-space colours
       const disp = (c: THREE.Color) => c.clone().convertLinearToSRGB();
+      const capPal = spec.capColors ?? spec.colors;
       const fur = new THREE.Mesh(
         fg,
         new THREE.ShaderMaterial({
@@ -831,6 +1146,9 @@ export default function FuzzyCritterFooter({
             uRoot: { value: disp(darker(spec.colors[0], 0.2)) },
             uMid: { value: disp(new THREE.Color(spec.colors[0])) },
             uTip: { value: disp(new THREE.Color(spec.colors[1])) },
+            uRootB: { value: disp(darker(capPal[0], 0.2)) },
+            uMidB: { value: disp(new THREE.Color(capPal[0])) },
+            uTipB: { value: disp(new THREE.Color(capPal[1])) },
             ...u,
           },
         }),
@@ -855,6 +1173,7 @@ export default function FuzzyCritterFooter({
       }
       const inner = new THREE.Group();
       inner.add(core, fur, face);
+      if (props) inner.add(props.group);
       inner.rotation.set(0.16, yaw, 0);
       const outer = new THREE.Group();
       outer.add(inner);
@@ -1247,10 +1566,14 @@ export default function FuzzyCritterFooter({
       { threshold: [0, 0.2, 0.4] },
     );
     io.observe(root);
-    setReady(true);
+    // À la première image, pas dans le corps de l'effet : la scène a alors
+    // été rendue une fois et le fondu d'apparition ne découvre pas un canvas
+    // encore vide. Évite aussi un rendu en cascade au montage.
+    const reveal = requestAnimationFrame(() => setReady(true));
 
     return () => {
       timers.forEach(clearTimeout);
+      cancelAnimationFrame(reveal);
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();

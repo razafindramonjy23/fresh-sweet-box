@@ -1,10 +1,21 @@
 import type { MenuItem } from "@/types";
 
-/** Mots du bandeau défilant, sous le hero. */
+/**
+ * Mots du bandeau défilant, sous le hero.
+ *
+ * Rien d'inventé : tous reprennent du vocabulaire déjà présent dans la marque
+ * — la tagline (« Bar à salade, jus et desserts à emporter »), le bandeau du
+ * haut et le logo (« BAR À SALADE · JUS · DESSERT »).
+ *
+ * La bande boucle en continu : cinq entrées suffisent à remplir un écran
+ * large sans que la répétition se remarque.
+ */
 export const TICKER_WORDS: string[] = [
   "Fruits choisis avec soin",
   "Salades fraîches",
   "Jus & milkshakes",
+  "Desserts",
+  "À emporter",
 ];
 
 /** Cartes de la section « Les envies du jour ». */

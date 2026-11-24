@@ -20,7 +20,14 @@ export function SiteHeader() {
 
       <MobileNav
         cta={
-          <ArrowButton href="#carte" variant="nav">
+          <ArrowButton
+            href="#carte"
+            variant="nav"
+            /* Repoussé à droite dès que les liens disparaissent ; retiré
+               complètement sur téléphone, où la barre d'action fixe du bas
+               porte déjà l'appel à commander. */
+            className="max-[850px]:ml-auto max-[600px]:hidden"
+          >
             Découvrir la carte
           </ArrowButton>
         }

@@ -42,7 +42,9 @@ export function MobileNav({ children, cta }: Props) {
       {cta}
       <button
         type="button"
-        className="menu-toggle"
+        /* `size-11` = 44 px : le minimum recommandé pour une cible
+           tactile. L'ancien bouton mesurait 42 px de large. */
+        className="hidden size-11 cursor-pointer place-items-center rounded-xl border-0 bg-transparent text-[25px] leading-none text-deep max-[850px]:grid"
         aria-controls={open ? "menu-mobile" : undefined}
         aria-expanded={open}
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}

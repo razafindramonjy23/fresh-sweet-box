@@ -23,7 +23,10 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--cream);
+  /* Transparente tant qu'on est en haut : la barre se fond dans le hero et
+     ne pose aucune ligne inutile. Le fond translucide et l'ombre
+     n'apparaissent qu'au premier défilement (`data-scrolled`). */
+  background: transparent;
   transition:
     background 0.3s,
     box-shadow 0.3s;
@@ -81,10 +84,32 @@
 }
 
 .navlinks a {
+  position: relative;
   padding: 8px 0;
   transition: color 0.2s;
 }
 
+/* Soulignement qui se déploie depuis la gauche. Un pseudo-élément en
+   `scaleX` plutôt qu'une bordure animée en largeur : la transformation est
+   composée par le GPU et ne déclenche aucun recalcul de mise en page. */
+.navlinks a::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 2px;
+  height: 1.5px;
+  background: var(--berry);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-brand);
+}
+
 .navlinks a:hover {
   color: var(--berry);
+}
+
+.navlinks a:hover::after,
+.navlinks a:focus-visible::after {
+  transform: scaleX(1);
 }

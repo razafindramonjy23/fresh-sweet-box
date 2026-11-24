@@ -27,10 +27,17 @@ const ICON_PATHS: Record<ContactIconName, React.ReactNode> = {
   ),
 };
 
-export function ContactIcon({ name }: { name: ContactIconName }) {
+export function ContactIcon({
+  name,
+  className = "footer-icon",
+}: {
+  name: ContactIconName;
+  /** Remplace la classe du pied de page quand l'icône sert ailleurs. */
+  className?: string;
+}) {
   return (
     <svg
-      className="footer-icon"
+      className={className}
       viewBox="0 0 24 24"
       width="17"
       height="17"
