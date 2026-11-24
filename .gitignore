@@ -5,3 +5,8 @@ next-env.d.ts
 *.tsbuildinfo
 .DS_Store
 *.log
+
+# Variables d'environnement locales : elles contiennent des clés d'API.
+# Seul `.env.example` est suivi, et il ne porte aucune valeur.
+.env
+.env*.local

@@ -34,6 +34,7 @@
 /* 3. Composants ---------------------------------------------------------- */
 @import "./components/brand-loader.css";
 @import "./components/action-bar.css";
+@import "./components/chat.css";
 @import "./components/scroll-progress.css";
 @import "./components/word-reveal.css";
 @import "./components/mask-reveal.css";

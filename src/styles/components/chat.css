@@ -1,0 +1,261 @@
+/* Assistant du site -------------------------------------------------------
+   Un bouton flottant et son panneau de conversation. Les deux se placent
+   au-dessus de la barre d'action mobile (`z-index: 60`), et au-dessus d'elle
+   dans l'espace : sous 850 px, la barre occupe déjà le bas de l'écran.
+   -------------------------------------------------------------------------- */
+
+.chat-launcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  /* 52 px : au-delà du minimum de 44 px recommandé pour une cible tactile. */
+  min-height: 52px;
+  padding: 0 20px;
+  background: var(--deep);
+  color: var(--paper);
+  border-radius: 999px;
+  box-shadow: 0 10px 28px rgb(40 56 43 / 22%);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--ease-brand),
+    background 0.2s;
+}
+
+.chat-launcher:hover {
+  background: var(--sage);
+  transform: translateY(-2px);
+}
+
+.chat-launcher svg {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
+
+.chat-panel {
+  position: fixed;
+  right: 24px;
+  /* Juste au-dessus du bouton, qui mesure 52 px. */
+  bottom: 88px;
+  z-index: 71;
+  display: flex;
+  flex-direction: column;
+  width: 364px;
+  /* Ne dépasse jamais la fenêtre, quelle que soit la longueur de l'échange. */
+  max-height: min(560px, calc(100vh - 140px));
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 20px 44px rgb(40 56 43 / 18%);
+  overflow: hidden;
+}
+
+.chat-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 10px 14px 18px;
+  background: var(--leaf);
+  border-bottom: 1px solid var(--line);
+}
+
+.chat-panel__title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--deep);
+}
+
+.chat-panel__close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--deep);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chat-panel__close:hover {
+  background: rgb(40 56 43 / 10%);
+}
+
+.chat-panel__close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.chat-panel__log {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  overflow-y: auto;
+  /* Repousse le premier message en bas quand la conversation est courte. */
+  margin-top: auto;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  /* Les réponses du modèle peuvent contenir de longues suites sans espace. */
+  overflow-wrap: anywhere;
+}
+
+.chat-bubble--assistant {
+  align-self: flex-start;
+  background: var(--cream);
+  color: var(--ink);
+  border-bottom-left-radius: 6px;
+}
+
+.chat-bubble--user {
+  align-self: flex-end;
+  background: var(--deep);
+  color: var(--paper);
+  border-bottom-right-radius: 6px;
+}
+
+/* Attente de la première lettre : trois points qui respirent. */
+.chat-bubble__wait {
+  display: inline-block;
+  letter-spacing: 2px;
+  color: var(--muted);
+  animation: chat-wait 1.4s ease-in-out infinite;
+}
+
+@keyframes chat-wait {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.chat-panel__notice {
+  padding: 10px 14px;
+  background: var(--peach);
+  color: var(--ink);
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.chat-panel__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* Le champ est explicite pour un lecteur d'écran, invisible à l'œil : le
+   gabarit du panneau ne laisse pas la place à une étiquette affichée. */
+.chat-panel__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.chat-panel__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.chat-panel__input:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 1px;
+}
+
+.chat-panel__input:disabled {
+  opacity: 0.6;
+}
+
+.chat-panel__send {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: var(--berry);
+  color: var(--paper);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.chat-panel__send:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.chat-panel__send svg {
+  width: 20px;
+  height: 20px;
+}
+
+.chat-panel__foot {
+  padding: 0 16px 14px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.chat-panel__foot a {
+  color: var(--berry-text);
+  font-weight: 600;
+}
+
+@media (max-width: 850px) {
+  /* La barre d'action occupe les 52 derniers pixels de l'écran. */
+  .chat-launcher {
+    right: 16px;
+    bottom: calc(52px + 14px + env(safe-area-inset-bottom, 0px));
+    padding: 0 16px;
+  }
+
+  .chat-panel {
+    right: 12px;
+    left: 12px;
+    bottom: calc(52px + 78px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-height: min(70vh, calc(100vh - 220px));
+  }
+}
+
+@media (max-width: 420px) {
+  /* Sous cette largeur, le libellé pousse le bouton contre le bord. */
+  .chat-launcher__label {
+    display: none;
+  }
+
+  .chat-launcher {
+    padding: 0;
+    width: 52px;
+    justify-content: center;
+  }
+}

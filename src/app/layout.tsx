@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Poppins } from "next/font/google";
+import { ChatLauncher } from "@/components/chat/ChatLauncher";
 import { ActionBar } from "@/components/layout/ActionBar";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -112,6 +113,9 @@ export default function RootLayout({
 
           <SiteFooter />
           <ActionBar />
+          {/* Pas de clé d'API configurée, pas d'assistant : le bouton ne
+              s'affiche que si la route peut réellement répondre. */}
+          {process.env.GEMINI_API_KEY && <ChatLauncher />}
         </MotionProvider>
       </body>
     </html>
