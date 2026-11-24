@@ -9,11 +9,20 @@ import { SPLASH_KEY } from "@/lib/splash";
 /**
  * Temps d'affichage avant le fondu.
  *
- * Le nom est entièrement posé au bout de ~0,86 s (`--loader-letter-window` +
- * `--loader-letter-duration` dans `styles/components/brand-loader.css`) :
- * une seconde laisse donc le temps de le lire avant que l'écran s'efface.
+ * Deux animations doivent tenir dedans (toutes deux dans
+ * `styles/components/brand-loader.css`) :
+ *
+ * - le nom est posé au bout de ~0,86 s (`--loader-letter-window` +
+ *   `--loader-letter-duration`) ;
+ * - le logo achève son tour à 1,8 s (`--loader-logo-duration`).
+ *
+ * 2,4 s laisse donc voir le tour en entier, puis une demi-seconde de calme
+ * avec le logo posé et le nom lisible, avant que l'écran s'efface.
+ *
+ * C'est le prix à payer : chaque première visite attend d'autant. Baisser
+ * cette valeur sous 1,8 s couperait la rotation en plein mouvement.
  */
-const VISIBLE_MS = 1000;
+const VISIBLE_MS = 2400;
 
 /** Durée du fondu de sortie, en secondes. */
 const FADE_OUT = 0.65;

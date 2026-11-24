@@ -16,6 +16,29 @@
   --loader-sweep: 2.4s;
   --loader-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 
+  /*
+   * Tour complet du logo, sur l'axe vertical.
+   *
+   * La durée est volontairement longue : un tour expédié en une demi-seconde
+   * se devine mais ne se regarde pas. `SplashScreen` tient compte de cette
+   * valeur pour décider combien de temps l'écran reste affiché.
+   */
+  --loader-logo-turn: 360deg;
+  --loader-logo-duration: 1.8s;
+
+  /*
+   * Courbe propre au logo, et NON `--loader-ease`.
+   *
+   * La courbe de la maison est une sortie franche : appliquée à un tour
+   * complet, elle expédie les trois quarts de la rotation dans le premier
+   * tiers du temps, puis rampe jusqu'à l'arrêt. Le tour paraît alors trop
+   * rapide ET trop long à la fois.
+   *
+   * Celle-ci démarre doucement, tourne à vitesse régulière et se pose : la
+   * rotation reste lisible d'un bout à l'autre.
+   */
+  --loader-logo-ease: cubic-bezier(0.5, 0.05, 0.25, 1);
+
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -23,6 +46,50 @@
   place-items: center;
   padding-inline: var(--gutter);
   background: var(--cream);
+}
+
+/*
+ * La pile : le logo, puis le nom.
+ *
+ * `perspective` est posée ICI, sur le parent — c'est elle, et elle seule,
+ * qui transforme la rotation en volume. Sans elle, un `rotateY` n'est qu'un
+ * écrasement horizontal, comme une feuille de papier vue de face.
+ */
+.brand-loader__stack {
+  display: grid;
+  justify-items: center;
+  gap: clamp(13px, 2.8vw, 21px);
+  perspective: 800px;
+}
+
+/*
+ * La pièce qui tourne. `preserve-3d` est indispensable : sans lui, les deux
+ * faces seraient aplaties dans le plan du parent et la face arrière
+ * n'existerait plus en tant que telle.
+ */
+.brand-loader__coin {
+  position: relative;
+  display: block;
+  transform-style: preserve-3d;
+  will-change: transform;
+  animation: brand-loader-logo var(--loader-logo-duration)
+    var(--loader-logo-ease) forwards;
+}
+
+.brand-loader__face {
+  display: block;
+  height: clamp(66px, 15vw, 104px);
+  width: auto;
+  /* Chacune disparaît dès qu'elle présente son dos : c'est ce qui évite
+     de voir le logo en miroir. */
+  backface-visibility: hidden;
+}
+
+/* La face arrière est posée sur la première, déjà retournée. */
+.brand-loader__face--back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
 }
 
 .brand-loader__word {
@@ -88,6 +155,22 @@
   animation: brand-loader-sweep var(--loader-sweep) ease-in-out infinite;
 }
 
+/* Un tour complet, qui se pose. Le fondu est bouclé tôt : le logo doit être
+   pleinement visible pendant qu'il tourne, pas seulement à l'arrivée. */
+@keyframes brand-loader-logo {
+  from {
+    opacity: 0;
+    transform: rotateY(0deg) scale(0.94);
+  }
+  18% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: rotateY(var(--loader-logo-turn)) scale(1);
+  }
+}
+
 @keyframes brand-loader-letter {
   from {
     opacity: 0;
@@ -124,8 +207,10 @@
 /* Sans animation : le nom s'affiche posé, et l'écran disparaît tout de
    suite (voir `SplashScreen`). */
 @media (prefers-reduced-motion: reduce) {
+  .brand-loader__coin,
   .brand-loader__letter {
     opacity: 1;
+    transform: none;
     animation: none;
   }
 

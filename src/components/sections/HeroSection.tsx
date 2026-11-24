@@ -1,7 +1,28 @@
-import { Stagger, StaggerItem } from "@/components/motion";
+import { Stagger, StaggerItem, WordReveal } from "@/components/motion";
 import { ArrowButton } from "@/components/ui/ArrowButton";
 import { PHONE } from "@/content";
 import { HeroVisual } from "./hero/HeroVisual";
+
+/*
+ * Cadence du bloc de texte, reprise telle quelle par le titre.
+ *
+ * <Stagger> donne le tempo à ses enfants, mais <WordReveal> joue au montage
+ * et n'hérite de rien : il lui faut donc son propre délai, aligné à la main
+ * sur le rang du titre dans la liste.
+ *
+ *   OPEN (0.10) + un intervalle (0.09) = le titre entre à 0.19 s.
+ */
+const OPEN = 0.1;
+const STEP = 0.09;
+
+/** Le titre est le deuxième enfant : son tour vient après un intervalle. */
+const TITLE_AT = OPEN + STEP;
+
+/*
+ * La seconde ligne enchaîne sur la première sans rupture : deux mots à
+ * 0,055 s d'intervalle ont été lancés avant elle.
+ */
+const SECOND_LINE_AT = TITLE_AT + 2 * 0.055;
 
 /**
  * Première section : le texte d'accroche et la composition fruitée.
@@ -22,8 +43,8 @@ export function HeroSection() {
       <Stagger
         className="relative z-2 max-w-[650px] lg:max-w-[600px]"
         now
-        delay={0.1}
-        gap={0.09}
+        delay={OPEN}
+        gap={STEP}
       >
         <StaggerItem
           as="p"
@@ -33,13 +54,19 @@ export function HeroSection() {
           Le frais fait maison
         </StaggerItem>
 
+        {/* `from="none"` : les mots portent déjà la montée, l'enveloppe ne
+            garde que le fondu. Deux `y` sur un même élément s'additionneraient
+            — c'est la règle 3 de `motion/variants.ts`. */}
         <StaggerItem
           as="h1"
+          from="none"
           className="m-0 mb-[18px] font-display text-[clamp(34px,9.6vw,48px)] leading-[1.1] font-semibold tracking-[-0.03em] text-balance text-deep lg:mb-[23px] lg:text-[clamp(38px,5vw,68px)] lg:leading-[1.08]"
         >
-          La pause
+          <WordReveal text="La pause" now delay={TITLE_AT} />
           <br />
-          <em className="font-semibold text-berry-ink">pleine de vie.</em>
+          <em className="font-semibold text-berry-ink">
+            <WordReveal text="pleine de vie." now delay={SECOND_LINE_AT} />
+          </em>
         </StaggerItem>
 
         <StaggerItem
