@@ -1,0 +1,41 @@
+/* Fruits flottants -----------------------------------------------------------
+   Voir `components/decor/FloatingFruits.tsx`. L'enveloppe glisse au
+   défilement (Framer, `transform`), le SVG se balance (CSS, ci-dessous).
+   -------------------------------------------------------------------------- */
+
+.floating-fruit {
+  position: absolute;
+  width: var(--fruit-size);
+  height: var(--fruit-size);
+}
+
+.floating-fruit svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  rotate: var(--fruit-rotate);
+  filter: drop-shadow(0 8px 14px rgb(51 75 55 / 12%));
+  animation: fruit-bob 6s ease-in-out infinite;
+  animation-delay: var(--fruit-delay);
+}
+
+@media (min-width: 761px) {
+  .floating-fruit {
+    width: calc(var(--fruit-size) * 1.4);
+    height: calc(var(--fruit-size) * 1.4);
+  }
+}
+
+/* `translate` + `rotate` (propriétés individuelles) : elles s'ajoutent à
+   l'inclinaison de départ au lieu de l'écraser. */
+@keyframes fruit-bob {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: var(--fruit-rotate);
+  }
+  50% {
+    translate: 0 -10px;
+    rotate: calc(var(--fruit-rotate) + 8deg);
+  }
+}

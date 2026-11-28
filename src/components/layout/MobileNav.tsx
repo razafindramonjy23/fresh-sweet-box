@@ -48,6 +48,8 @@ export function MobileNav({ children, cta }: Props) {
         aria-controls={open ? "menu-mobile" : undefined}
         aria-expanded={open}
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+        data-haptic="tap"
+        data-press=""
         onClick={() => setOpen((value) => !value)}
       >
         <m.span

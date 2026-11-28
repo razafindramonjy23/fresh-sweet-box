@@ -5,6 +5,7 @@ export { FloatIn } from "./FloatIn";
 export { Parallax } from "./Parallax";
 export { WordReveal } from "./WordReveal";
 export { MaskReveal } from "./MaskReveal";
+export { ScrollZoom } from "./ScrollZoom";
 export {
   DURATION,
   EASE,

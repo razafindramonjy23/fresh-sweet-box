@@ -18,8 +18,9 @@ const BASE =
   "transition-[transform,box-shadow,background-color,border-color] duration-200 " +
   "motion-reduce:transition-none";
 
+/* `btn-shine` : un reflet traverse le bouton au survol. */
 const LIFT =
-  "hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 " +
+  "btn-shine hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 " +
   "hover:shadow-[0_10px_26px_rgba(187,54,105,0.3)]";
 
 /*
@@ -43,8 +44,10 @@ const VARIANT = {
   ),
   ghost: cn(
     BASE,
-    "border border-deep/30 px-6 py-[13px] text-[17px] text-deep",
-    "hover:-translate-y-0.5 hover:border-deep hover:bg-deep/5",
+    /* `btn-sweep` : le fond vert se remplit de bas en haut au survol
+       (voir `styles/components/interactions.css`). */
+    "btn-sweep border border-deep/30 px-6 py-[13px] text-[17px] text-deep",
+    "hover:-translate-y-0.5 hover:border-deep hover:text-cream",
     "motion-reduce:hover:translate-y-0 sm:px-[30px] sm:py-[15px] sm:text-[19px]",
   ),
   nav: cn(
@@ -55,10 +58,9 @@ const VARIANT = {
 } as const;
 
 const ICON = {
-  solid:
-    "size-8 text-[15px] group-hover:translate-x-[3px] sm:size-9 sm:text-base",
+  solid: "size-8 text-[15px] sm:size-9 sm:text-base",
   ghost: "",
-  nav: "size-[30px] text-[14px] group-hover:translate-x-[3px]",
+  nav: "size-[30px] text-[14px]",
 } as const;
 
 /**
@@ -72,18 +74,26 @@ export function ArrowButton({
   className,
 }: Props) {
   return (
-    <a className={cn(VARIANT[variant], className)} href={href}>
+    <a
+      className={cn(VARIANT[variant], className)}
+      href={href}
+      /* Appeler est l'action qui compte le plus : vibration plus marquée. */
+      data-haptic={href.startsWith("tel:") ? "impact" : "tap"}
+      data-magnetic=""
+      data-press=""
+    >
       {children}
       {variant !== "ghost" && (
         <span
           aria-hidden="true"
           className={cn(
-            "grid flex-none place-items-center rounded-full bg-white leading-none text-berry-ink",
-            "transition-transform duration-200 motion-reduce:transition-none",
+            /* `overflow-hidden` : la flèche sort à droite et revient par la
+               gauche sans déborder de la pastille. */
+            "grid flex-none place-items-center overflow-hidden rounded-full bg-white leading-none text-berry-ink",
             ICON[variant],
           )}
         >
-          →
+          <span className="hover-arrow">→</span>
         </span>
       )}
     </a>

@@ -1,6 +1,6 @@
 import { Reveal, Stagger, StaggerItem, WordReveal } from "@/components/motion";
 import { ContactIcon } from "@/components/ui/ContactIcon";
-import { FACEBOOK, INSTAGRAM, PHONE, SITE } from "@/content";
+import { EMAIL, FACEBOOK, INSTAGRAM, PHONE, SITE } from "@/content";
 import type { ContactIconName } from "@/types";
 
 type Action = {
@@ -16,8 +16,11 @@ type Action = {
  * Les trois chemins réellement disponibles pour joindre la boutique.
  *
  * Rien n'est inventé : tout vient de `src/content/contact.ts`. WhatsApp,
- * l'e-mail, l'adresse et le lien Maps manquent encore côté métier — ils
- * apparaîtront ici dès qu'ils seront renseignés, et surtout pas avant.
+ * l'adresse et le lien Maps manquent encore côté métier — ils apparaîtront
+ * ici dès qu'ils seront renseignés, et surtout pas avant.
+ *
+ * L'ordre n'est pas décoratif : il va du plus immédiat (un appel, on prépare
+ * pendant le trajet) au plus différé (un e-mail, à quoi il faut répondre).
  */
 const ACTIONS: Action[] = [
   {
@@ -40,6 +43,12 @@ const ACTIONS: Action[] = [
     detail: FACEBOOK.label,
     href: FACEBOOK.url,
     external: true,
+  },
+  {
+    icon: "mail",
+    label: "Écrire un e-mail",
+    detail: EMAIL.address,
+    href: EMAIL.href,
   },
 ];
 
@@ -79,6 +88,8 @@ export function ContactSection() {
             <StaggerItem key={action.label} from="right">
               <a
                 href={action.href}
+                data-haptic={action.primary ? "impact" : "tap"}
+                data-press=""
                 {...(action.external
                   ? { target: "_blank", rel: "noopener noreferrer" }
                   : {})}
@@ -117,7 +128,7 @@ export function ContactSection() {
 
                 <span
                   aria-hidden="true"
-                  className="ml-auto flex-none text-xl transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none"
+                  className="hover-arrow ml-auto flex-none text-xl"
                 >
                   →
                 </span>

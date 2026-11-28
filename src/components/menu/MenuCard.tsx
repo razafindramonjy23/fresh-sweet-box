@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { StaggerItem } from "@/components/motion";
+import { ScrollZoom, StaggerItem } from "@/components/motion";
 import { cn } from "@/lib/utils/cn";
 import type { MenuItem, MenuTheme } from "@/types";
 
@@ -40,14 +40,18 @@ export function MenuCard({ item }: { item: MenuItem }) {
     >
       <div className="relative aspect-16/11 overflow-hidden rounded-[20px] bg-paper/60">
         {item.image ? (
-          <Image
-            src={item.image}
-            alt=""
-            fill
-            /* Deux colonnes au-delà de 760 px, une seule en dessous. */
-            sizes="(max-width: 760px) 92vw, (max-width: 1320px) 46vw, 580px"
-            className="object-cover transition-transform duration-700 ease-brand group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          />
+          /* Zoom au défilement : sur mobile, c'est lui qui anime la photo,
+             le zoom au survol n'y existant pas. */
+          <ScrollZoom className="absolute inset-0">
+            <Image
+              src={item.image}
+              alt=""
+              fill
+              /* Deux colonnes au-delà de 760 px, une seule en dessous. */
+              sizes="(max-width: 760px) 92vw, (max-width: 1320px) 46vw, 580px"
+              className="object-cover transition-transform duration-700 ease-brand group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            />
+          </ScrollZoom>
         ) : (
           <span
             aria-hidden="true"
@@ -76,13 +80,12 @@ export function MenuCard({ item }: { item: MenuItem }) {
             seule n'annonçait pas sa destination hors lecteur d'écran. */}
         <a
           href="#contact"
+          data-haptic="tap"
+          data-press=""
           className="group/cta mt-6 inline-flex w-fit items-center gap-2.5 rounded-full bg-paper px-5 py-3 text-[13px] font-semibold text-deep transition-colors duration-200 hover:bg-white"
         >
           {item.linkLabel}
-          <span
-            aria-hidden="true"
-            className="transition-transform duration-200 group-hover/cta:translate-x-1 motion-reduce:transition-none"
-          >
+          <span aria-hidden="true" className="hover-arrow">
             →
           </span>
         </a>

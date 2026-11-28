@@ -29,9 +29,18 @@
     border-radius: 12px;
   }
 
-  .menu-panel a:hover {
+  /* Survol à la souris, appui au doigt : le même retour, sans que le
+     survol reste collé après un tap. */
+  .menu-panel a:active {
     background: var(--leaf);
     color: var(--deep);
+  }
+
+  @media (hover: hover) {
+    .menu-panel a:hover {
+      background: var(--leaf);
+      color: var(--deep);
+    }
   }
 
   .section {

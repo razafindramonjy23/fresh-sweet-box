@@ -2,6 +2,7 @@ import {
   ContactSection,
   HeroSection,
   MenuSection,
+  ReviewsSection,
   StorySection,
   TickerSection,
 } from "@/components/sections";
@@ -19,6 +20,7 @@ export default function HomePage() {
       <TickerSection />
       <MenuSection />
       <StorySection />
+      <ReviewsSection />
       <ContactSection />
     </>
   );

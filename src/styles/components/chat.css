@@ -28,9 +28,13 @@
     background 0.2s;
 }
 
-.chat-launcher:hover {
-  background: var(--sage);
-  transform: translateY(-2px);
+/* `(hover: hover)` : sur téléphone, le bouton resterait soulevé et vert
+   après le tap. */
+@media (hover: hover) {
+  .chat-launcher:hover {
+    background: var(--sage);
+    transform: translateY(-2px);
+  }
 }
 
 .chat-launcher svg {
@@ -85,8 +89,10 @@
   transition: background 0.2s;
 }
 
-.chat-panel__close:hover {
-  background: rgb(40 56 43 / 10%);
+@media (hover: hover) {
+  .chat-panel__close:hover {
+    background: rgb(40 56 43 / 10%);
+  }
 }
 
 .chat-panel__close svg {

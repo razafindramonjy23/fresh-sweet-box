@@ -1,4 +1,5 @@
 import {
+  EMAIL,
   FACEBOOK,
   INSTAGRAM,
   MENU_ITEMS,
@@ -71,7 +72,7 @@ Contact :
 - Téléphone : ${PHONE.display}
 - Instagram : ${INSTAGRAM.handle}
 - Facebook : ${FACEBOOK.url}
-- E-mail : non communiqué.
+- E-mail : ${EMAIL.address}
 
 La page d'accueil comporte les sections suivantes : ${NAV_LINKS.map((link) => link.label).join(", ")}.
 

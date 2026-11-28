@@ -45,6 +45,8 @@ export function ActionBar() {
               key={action.label}
               className="action-bar__item"
               href={action.href}
+              data-haptic="impact"
+              data-press=""
               {...(action.external
                 ? { target: "_blank", rel: "noopener noreferrer" }
                 : {})}

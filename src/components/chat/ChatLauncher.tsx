@@ -44,6 +44,8 @@ export function ChatLauncher() {
         ref={buttonRef}
         type="button"
         className="chat-launcher"
+        data-haptic="tap"
+        data-press=""
         onClick={toggle}
         aria-expanded={open}
         aria-label={open ? "Fermer l'assistant" : "Poser une question"}

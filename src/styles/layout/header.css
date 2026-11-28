@@ -105,11 +105,18 @@
   transition: transform 0.25s var(--ease-brand);
 }
 
-.navlinks a:hover {
-  color: var(--berry);
+/* `(hover: hover)` : sur écran tactile, le survol resterait collé au lien
+   après le tap. */
+@media (hover: hover) {
+  .navlinks a:hover {
+    color: var(--berry);
+  }
+
+  .navlinks a:hover::after {
+    transform: scaleX(1);
+  }
 }
 
-.navlinks a:hover::after,
 .navlinks a:focus-visible::after {
   transform: scaleX(1);
 }

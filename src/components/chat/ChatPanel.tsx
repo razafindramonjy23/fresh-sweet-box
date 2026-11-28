@@ -4,6 +4,7 @@ import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { PHONE, SITE } from "@/content";
 import { CHAT } from "@/lib/chat/config";
+import { haptic } from "@/lib/haptics";
 import type { ChatMessage } from "@/types";
 
 /**
@@ -118,6 +119,9 @@ export function ChatPanel({ open, onClose }: Props) {
       if (!complete) throw new Error("réponse vide");
 
       setMessages([...history, { role: "assistant", text: complete }]);
+      /* La réponse est arrivée : le geste d'envoi date de quelques secondes,
+         le navigateur peut donc refuser de vibrer — sans conséquence. */
+      haptic("success");
     } catch (error) {
       console.error("[chat]", error);
       setNotice(FALLBACK);
@@ -205,6 +209,8 @@ export function ChatPanel({ open, onClose }: Props) {
             <button
               type="submit"
               className="chat-panel__send"
+              data-haptic="tap"
+              data-press=""
               disabled={busy || draft.trim().length === 0}
               aria-label="Envoyer"
             >

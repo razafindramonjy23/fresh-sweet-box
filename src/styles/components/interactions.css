@@ -1,0 +1,161 @@
+/* Micro-interactions --------------------------------------------------------
+   Branchées par attributs, voir `components/providers/Interactions.tsx`.
+
+   Chaque effet utilise sa propre propriété CSS pour ne jamais écraser celles
+   que les composants posent déjà :
+   - `translate` : soulèvement au survol (utilitaires Tailwind) ;
+   - `transform` : attraction magnétique (`--mag-x`, `--mag-y`) ;
+   - `scale`     : enfoncement à l'appui.
+   Les trois se composent au lieu de se remplacer.
+   -------------------------------------------------------------------------- */
+
+[data-magnetic],
+[data-press] {
+  /* Liste élargie : elle remplace la `transition-property` des composants,
+     elle doit donc reprendre tout ce qu'ils animaient déjà. */
+  transition-property:
+    transform, translate, scale, background-color, border-color, color,
+    box-shadow, opacity;
+  transition-duration: 0.25s;
+  transition-timing-function: var(--ease-brand);
+}
+
+/* Attraction : le bouton glisse vers le curseur, puis revient en douceur. */
+[data-magnetic] {
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0);
+}
+
+/* La flèche intérieure suit un peu plus loin : effet de profondeur. */
+[data-magnetic] > [aria-hidden="true"] {
+  transform: translate3d(
+    calc(var(--mag-x, 0px) * 0.5),
+    calc(var(--mag-y, 0px) * 0.5),
+    0
+  );
+}
+
+/* Appui : le bouton s'enfonce sous le doigt, instantanément, puis rebondit
+   au relâchement. */
+[data-press]:active {
+  scale: 0.96;
+  transition-duration: 0.08s;
+}
+
+[data-press]:not(:active) {
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Survols ------------------------------------------------------------------
+   Tous limités à `(hover: hover)` : sur un écran tactile, un survol reste
+   « collé » après le tap. Tailwind v4 fait déjà ce tri pour ses utilitaires
+   `hover:` ; les règles écrites à la main doivent le faire elles-mêmes.
+
+   Chaque effet a aussi sa version `:focus-visible` : qui navigue au clavier
+   voit la même chose que qui survole à la souris.
+   -------------------------------------------------------------------------- */
+
+/* Flèche en boucle : elle file à droite, disparaît, revient par la gauche.
+   Plus vivant qu'un simple décalage de 3 px, et ça dit « on y va ». */
+.hover-arrow {
+  display: inline-block;
+}
+
+@keyframes arrow-loop {
+  0% {
+    translate: 0 0;
+    opacity: 1;
+  }
+  40% {
+    translate: 0.9em 0;
+    opacity: 0;
+  }
+  41% {
+    translate: -0.9em 0;
+    opacity: 0;
+  }
+  100% {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
+/* Reflet : une bande de lumière traverse le bouton, une fois. */
+.btn-shine {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgb(255 255 255 / 28%) 50%,
+    transparent 65%
+  );
+  translate: -110% 0;
+  pointer-events: none;
+}
+
+/* Remplissage : le fond monte du bas, le texte passe en crème. */
+.btn-sweep {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.btn-sweep::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--deep);
+  border-radius: inherit;
+  scale: 1 0;
+  transform-origin: bottom;
+  transition: scale 0.35s var(--ease-brand);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  a:hover .hover-arrow,
+  button:hover .hover-arrow {
+    animation: arrow-loop 0.5s var(--ease-brand);
+  }
+
+  .btn-shine:hover::after {
+    translate: 110% 0;
+    transition: translate 0.7s var(--ease-brand);
+  }
+
+  .btn-sweep:hover::before {
+    scale: 1 1;
+  }
+}
+
+a:focus-visible .hover-arrow {
+  animation: arrow-loop 0.5s var(--ease-brand);
+}
+
+.btn-sweep:focus-visible::before {
+  scale: 1 1;
+}
+
+.btn-sweep:focus-visible {
+  color: var(--cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-magnetic],
+  [data-magnetic] > [aria-hidden="true"] {
+    transform: none;
+  }
+
+  [data-press]:active {
+    scale: none;
+  }
+}

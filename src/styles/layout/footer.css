@@ -108,12 +108,38 @@
   align-items: center;
   min-height: 44px;
   margin-block: -11px;
+  position: relative;
   color: var(--ink);
   transition: color 0.2s;
 }
 
-.footer-list a:hover {
-  color: var(--berry);
+/* Même soulignement que la navigation : il se déploie depuis la gauche.
+   Placé sous le texte (et non sous la zone de 44 px) grâce au calcul. */
+.footer-list a::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(50% - 0.85em);
+  height: 1.5px;
+  background: var(--berry);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease-brand);
+}
+
+@media (hover: hover) {
+  .footer-list a:hover {
+    color: var(--berry);
+  }
+
+  .footer-list a:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.footer-list a:focus-visible::after {
+  transform: scaleX(1);
 }
 
 /* Information non fournie : affichée en italique, jamais inventée. */

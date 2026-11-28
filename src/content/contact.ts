@@ -17,6 +17,11 @@ export const INSTAGRAM = {
   url: "https://www.instagram.com/fresh_sweet_box/",
 } as const;
 
+export const EMAIL = {
+  address: "freshsweetbox@gmail.com",
+  href: "mailto:freshsweetbox@gmail.com",
+} as const;
+
 export const FACEBOOK = {
   label: "Notre page Facebook",
   url: "https://www.facebook.com/profile.php?id=100069940306804",
@@ -24,7 +29,9 @@ export const FACEBOOK = {
 
 /**
  * Le pied de page. Ce qui n'est pas connu porte `pending` et reste affiché
- * en italique, jamais inventé — il ne reste que l'e-mail.
+ * en italique, jamais inventé. Les quatre coordonnées sont désormais
+ * renseignées ; `pending` reste dans le type pour l'adresse postale et le
+ * lien Maps, qui manquent encore.
  */
 export const CONTACT_LINKS: ContactLink[] = [
   { icon: "phone", label: PHONE.display, href: PHONE.href },
@@ -40,5 +47,5 @@ export const CONTACT_LINKS: ContactLink[] = [
     href: FACEBOOK.url,
     external: true,
   },
-  { icon: "mail", label: "E-mail à compléter", pending: true },
+  { icon: "mail", label: EMAIL.address, href: EMAIL.href },
 ];

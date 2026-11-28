@@ -38,6 +38,9 @@
 @import "./components/scroll-progress.css";
 @import "./components/word-reveal.css";
 @import "./components/mask-reveal.css";
+@import "./components/floating-fruits.css";
+/* Après les autres composants : sa liste de transitions doit l'emporter. */
+@import "./components/interactions.css";
 
 /* 4. Sections ------------------------------------------------------------ */
 @import "./sections/story.css";

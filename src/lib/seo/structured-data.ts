@@ -1,6 +1,13 @@
 import { config } from "@/lib/config";
 import { toSchemaHours } from "@/lib/hours";
-import { FACEBOOK, INSTAGRAM, OPENING_HOURS, PHONE, SITE } from "@/content";
+import {
+  EMAIL,
+  FACEBOOK,
+  INSTAGRAM,
+  OPENING_HOURS,
+  PHONE,
+  SITE,
+} from "@/content";
 
 /**
  * Fiche `FoodEstablishment` pour les moteurs de recherche.
@@ -21,6 +28,7 @@ export function buildStructuredData() {
     image: `${config.siteUrl}/opengraph-image.jpg`,
     logo: `${config.siteUrl}${SITE.logo.src}`,
     telephone: PHONE.display,
+    email: EMAIL.address,
     servesCuisine: ["Salades", "Jus", "Desserts"],
     sameAs: [INSTAGRAM.url, FACEBOOK.url],
     ...(hours.length > 0 ? { openingHoursSpecification: hours } : {}),
